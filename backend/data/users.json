@@ -1,0 +1,84 @@
+{
+  "users": [
+    {
+      "id": "user_5f6ca9cb",
+      "username": "testuser",
+      "email": "test@example.com",
+      "full_name": "Test User",
+      "password_hash": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+      "created_at": "2025-11-01T08:51:06.955886",
+      "last_login": "2025-11-01T08:51:22.877477",
+      "is_active": true
+    },
+    {
+      "id": "user_da87cc90",
+      "username": "krishdshah",
+      "email": "priyanshugoyal472@gmail.com",
+      "full_name": "krishdshah",
+      "password_hash": "e86b62820ba00e5b5aa346be2e5856f6c32c87b1462afd7a856d914ccfa62d8a",
+      "created_at": "2025-11-01T08:57:29.183946",
+      "last_login": "2025-11-01T11:51:20.999030",
+      "is_active": true
+    },
+    {
+      "id": "user_df18139e",
+      "username": "Neotech",
+      "email": "priyanshugoyal472@gmail.com",
+      "full_name": "Priyanshu Goyal",
+      "password_hash": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "created_at": "2025-11-01T12:11:12.148781",
+      "last_login": "2025-11-01T12:11:12.187863",
+      "is_active": true
+    }
+  ],
+  "sessions": {
+    "3muWy8HwrpNikL-tZsE25dL0SYCFbwUe6IZzQxpRR1w": {
+      "user_id": "user_5f6ca9cb",
+      "username": "testuser",
+      "created_at": "2025-11-01T08:51:22.877477",
+      "expires_at": "2025-11-02T08:51:22.877477",
+      "is_active": true
+    },
+    "x5D8PyRLO7sLD_JtEPN2PmRmao3eqXFVwvafu-N5DuA": {
+      "user_id": "user_da87cc90",
+      "username": "krishdshah",
+      "created_at": "2025-11-01T08:57:29.243915",
+      "expires_at": "2025-11-02T08:57:29.243915",
+      "is_active": true
+    },
+    "g9vAon3kibO3d2Ambsz1ROi3deE9zjuI7hceGe82rfg": {
+      "user_id": "user_da87cc90",
+      "username": "krishdshah",
+      "created_at": "2025-11-01T08:59:27.276487",
+      "expires_at": "2025-11-02T08:59:27.276487",
+      "is_active": true
+    },
+    "vK0MYBUf9H-kq79wPkkPWo0zVt7OrcHACP_h5Sy15IU": {
+      "user_id": "user_da87cc90",
+      "username": "krishdshah",
+      "created_at": "2025-11-01T09:02:22.496639",
+      "expires_at": "2025-11-02T09:02:22.496639",
+      "is_active": true
+    },
+    "_7H7Gcda7vV16iJe-uPZG9HKVZpR0DoWsli9KM17-5Q": {
+      "user_id": "user_da87cc90",
+      "username": "krishdshah",
+      "created_at": "2025-11-01T11:51:21.005930",
+      "expires_at": "2025-11-02T11:51:21.005930",
+      "is_active": true
+    },
+    "OMzmCeI36Jt44ZzYyV71RKYV7puUHCQXZUfqCEvU-f0": {
+      "user_id": "user_df18139e",
+      "username": "Neotech",
+      "created_at": "2025-11-01T12:11:12.188846",
+      "expires_at": "2025-11-02T12:11:12.187863",
+      "is_active": true
+    }
+  },
+  "metadata": {
+    "created": "2024-11-01T00:00:00Z",
+    "last_updated": "2024-11-01T00:00:00Z",
+    "total_users": 3,
+    "version": "1.0.0"
+  }
+}

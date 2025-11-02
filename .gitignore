@@ -1,0 +1,74 @@
+# Virtual environment
+venv/
+env/
+.env
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+*.pyd
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Database
+*.db
+*.sqlite3
+infosphere.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node modules (if any)
+node_modules/
+
+# Logs
+*.log
+
+# ML Models (large files)
+*.pkl
+*.pth
+*.h5
+*.model
+*.safetensors
+*.pt
+*.ckpt
+*.joblib
+ml_core/models/
+ml_core/ml_core/
+ml_core/datasets/deepfake_database/
+ml_core/datasets/
+*.csv
+
+# Frontend build
+frontend/build/
+frontend/dist/
+
+# Package locks (keep package.json but not lock files)
+package-lock.json
+yarn.lock

@@ -1,0 +1,862 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import './styles/typography.css';
+
+@layer base {
+  html, body {
+    font-family: 'Inter', system-ui, sans-serif;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+    background: var(--old-paper);
+    background-image: 
+      /* Main torn paper texture */
+      radial-gradient(circle at 15% 20%, var(--paper-stain-medium) 0%, transparent 25%),
+      radial-gradient(circle at 85% 80%, var(--paper-stain-light) 0%, transparent 30%),
+      radial-gradient(circle at 45% 60%, var(--paper-stain-dark) 0%, transparent 20%),
+      radial-gradient(circle at 70% 15%, var(--paper-age-spot) 0%, transparent 15%),
+      radial-gradient(circle at 25% 85%, var(--paper-crease) 0%, transparent 18%),
+      /* Paper fiber texture */
+      repeating-linear-gradient(45deg, transparent 0px, rgba(192,168,130,0.08) 1px, transparent 2px),
+      repeating-linear-gradient(-45deg, transparent 0px, rgba(166,149,112,0.06) 1px, transparent 3px),
+      /* Age spots and stains */
+      radial-gradient(ellipse at 30% 40%, rgba(192,168,130,0.12) 0%, transparent 35%),
+      radial-gradient(ellipse at 80% 70%, rgba(212,193,160,0.1) 0%, transparent 40%),
+      radial-gradient(ellipse at 10% 10%, rgba(166,149,112,0.08) 0%, transparent 25%),
+      /* Subtle creases and folds */
+      linear-gradient(135deg, transparent 48%, rgba(192,168,130,0.04) 50%, transparent 52%),
+      linear-gradient(45deg, transparent 47%, rgba(166,149,112,0.05) 49%, transparent 51%);
+    background-size: 
+      200px 180px,
+      250px 220px,
+      180px 160px,
+      120px 100px,
+      160px 140px,
+      4px 4px,
+      6px 6px,
+      300px 250px,
+      350px 300px,
+      200px 180px,
+      100% 100%,
+      100% 100%;
+    background-attachment: fixed;
+    color: var(--vintage-ink);
+    position: relative;
+  }
+  
+  /* Ensure the paper texture covers everything */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+}
+
+@layer components {
+  /* Authentic Old Paper Color Variables */
+  :root {
+    --old-paper: #ddd0b8;
+    --old-paper-light: #e8dcc6;
+    --old-paper-dark: #c9b99f;
+    --old-paper-darker: #b8a588;
+    --paper-stain-light: #d4c1a0;
+    --paper-stain-medium: #c0a882;
+    --paper-stain-dark: #a69570;
+    --vintage-ink: #4a3728;
+    --vintage-ink-dark: #6d4c36;
+    --vintage-ink-light: #5c4234;
+    --paper-tear-shadow: rgba(74,55,40,0.4);
+    --paper-crease: rgba(166,149,112,0.3);
+    --paper-age-spot: rgba(192,168,130,0.6);
+    --paper-fade: rgba(212,193,160,0.8);
+  }
+
+  .btn-primary {
+    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary-200 hover:bg-secondary-300 text-secondary-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+  
+  .card {
+    @apply bg-white rounded-lg shadow-md border border-secondary-200 p-6;
+  }
+  
+  .input-field {
+    @apply w-full px-3 py-2 border border-secondary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+  }
+
+  /* Vintage Worn-Out Newspaper Style Components */
+  .newspaper-bg {
+    background: transparent !important;
+    backdrop-filter: none;
+    position: relative;
+  }
+  
+  .newspaper-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      /* Very subtle overlay to slightly darken sections */
+      radial-gradient(circle at 30% 40%, rgba(166,149,112,0.08) 0%, transparent 60%),
+      radial-gradient(circle at 70% 80%, rgba(192,168,130,0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+    background-size: 
+      150px 120px, 
+      200px 180px, 
+      300px 250px,
+      18px 18px,
+      400px 300px,
+      350px 280px;
+    background-position: 
+      0 0, 
+      100px 50px, 
+      -50px 200px,
+      0 0,
+      0 0,
+      200px 100px;
+    position: relative;
+  }
+
+  .newspaper-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      /* Worn paper grain effect */
+      linear-gradient(90deg, transparent 78px, rgba(139,69,19,0.06) 80px, transparent 82px),
+      linear-gradient(transparent 78px, rgba(160,82,45,0.04) 80px, transparent 82px),
+      /* Age spots and stains */
+      radial-gradient(ellipse at 20% 30%, rgba(205,133,63,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(222,184,135,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse at 60% 20%, rgba(188,143,143,0.04) 0%, transparent 40%);
+    background-size: 
+      75px 75px, 
+      75px 75px,
+      300px 200px,
+      400px 350px,
+      250px 180px;
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  .newspaper-title {
+    font-family: 'Times New Roman', serif;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    letter-spacing: 2px;
+  }
+
+  .newspaper-subtitle {
+    font-family: 'Times New Roman', serif;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+    padding: 8px 0;
+    margin: 16px 0;
+  }
+
+    .newspaper-header {
+    background: rgba(212,193,160,0.3) !important;
+    background-image: 
+      /* Subtle darker area for header distinction */
+      radial-gradient(ellipse at center, rgba(166,149,112,0.15) 0%, transparent 70%),
+      linear-gradient(180deg, rgba(192,168,130,0.1) 0%, transparent 100%);
+    border-bottom: 2px solid var(--paper-stain-dark);
+    box-shadow: 0 2px 4px var(--paper-tear-shadow);
+    backdrop-filter: none;
+    position: relative;
+  }
+  
+  .newspaper-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      /* Very subtle texture overlay */
+      repeating-linear-gradient(90deg, transparent 0px, rgba(166,149,112,0.02) 1px, transparent 3px);
+    pointer-events: none;
+  }
+
+    .newspaper-section {
+    background: rgba(212,193,160,0.15) !important;
+    background-image: 
+      /* Very subtle section distinction */
+      radial-gradient(circle at 50% 50%, rgba(166,149,112,0.08) 0%, transparent 80%);
+    border: 1px solid var(--paper-stain-medium);
+    box-shadow: 
+      1px 1px 3px var(--paper-tear-shadow), 
+      inset 0 0 10px rgba(192,168,130,0.1);
+    backdrop-filter: none;
+    position: relative;
+  }
+  
+  .newspaper-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      /* Subtle paper texture overlay */
+      repeating-linear-gradient(45deg, transparent 0px, rgba(166,149,112,0.01) 1px, transparent 4px);
+    pointer-events: none;
+  }
+
+  .newspaper-section-title {
+    font-family: 'Times New Roman', serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+    .newspaper-card {
+    background: rgba(212,193,160,0.2) !important;
+    background-image: 
+      /* Minimal card distinction while maintaining paper texture */
+      radial-gradient(circle at 50% 50%, rgba(166,149,112,0.1) 0%, transparent 70%);
+    border: 1px solid var(--paper-stain-medium);
+    box-shadow: 
+      2px 2px 6px var(--paper-tear-shadow), 
+      inset 0 0 8px rgba(192,168,130,0.08);
+    transition: all 0.3s ease;
+    backdrop-filter: none;
+    position: relative;
+  }
+  
+  .newspaper-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      /* Paper fiber texture */
+      repeating-linear-gradient(30deg, transparent 0px, rgba(166,149,112,0.015) 1px, transparent 3px);
+    pointer-events: none;
+    z-index: -1;
+  }
+  
+  .newspaper-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 
+      3px 4px 8px var(--paper-tear-shadow), 
+      inset 0 0 10px rgba(192,168,130,0.12);
+    background: rgba(212,193,160,0.25) !important;
+  }
+
+  .newspaper-card:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 8px rgba(101,67,33,0.35), inset 0 0 10px rgba(245,222,179,0.4);
+  }
+
+    .newspaper-card-header {
+    background: rgba(166,149,112,0.4) !important;
+    background-image: 
+      linear-gradient(135deg, rgba(192,168,130,0.3) 0%, rgba(166,149,112,0.5) 100%);
+    color: var(--vintage-ink) !important;
+    border-bottom: 1px solid var(--paper-stain-dark);
+    text-shadow: 0.5px 0.5px 1px rgba(192,168,130,0.6);
+    box-shadow: inset 0 -1px 2px rgba(166,149,112,0.3);
+    position: relative;
+    backdrop-filter: none;
+  }
+  
+  .newspaper-card-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      /* Subtle texture for header */
+      repeating-linear-gradient(90deg, transparent 0px, rgba(192,168,130,0.02) 1px, transparent 4px);
+    pointer-events: none;
+  }
+
+  /* Traditional Newspaper Grid Layout - 2 columns max */
+  .newspaper-columns {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 1rem;
+    margin: 0;
+    padding: 0.5rem 0;
+    min-height: auto;
+  }
+  
+  /* Compact spacing for non-news sections */
+  .newspaper-section.mb-2 .newspaper-columns {
+    grid-gap: 0.125rem;
+    padding: 0.125rem 0;
+  }
+
+  @media (min-width: 768px) {
+    .newspaper-columns {
+      grid-template-columns: 1fr 2px 1fr;
+      grid-gap: 0;
+      column-gap: 2rem;
+      position: relative;
+    }
+    
+    .newspaper-columns::before {
+      content: '';
+      grid-column: 2;
+      background: var(--vintage-ink);
+      width: 2px;
+      height: 100%;
+      justify-self: center;
+    }
+    
+    .newspaper-article {
+      min-height: 320px;
+    }
+    
+    /* Compact sections on tablet */
+    .newspaper-section.mb-2 .newspaper-columns {
+      column-gap: 0.5rem;
+    }
+    
+    .newspaper-section.mb-2 .newspaper-article {
+      min-height: 40px;
+    }
+  }
+
+  .newspaper-article {
+    margin-bottom: 2rem;
+    padding: 1.5rem 1rem;
+    border-bottom: 2px solid var(--paper-stain-medium);
+    background: none !important;
+    box-shadow: none !important;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    position: relative;
+    line-height: 1.6;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .newspaper-article:last-child {
+    border-bottom: none;
+    margin-bottom: 1rem;
+  }
+
+  .newspaper-article .article-header {
+    border-bottom: 1px solid var(--paper-stain-medium);
+    padding-bottom: 0.75rem;
+    margin-bottom: 1rem;
+    flex-shrink: 0;
+  }
+
+  .newspaper-article .article-content {
+    padding-top: 0;
+    margin-top: 0;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  .newspaper-article h3 {
+    font-family: 'Times New Roman', serif;
+    font-weight: 900;
+    line-height: 1.3;
+    margin-bottom: 1rem;
+    text-transform: none;
+    letter-spacing: 0;
+    padding-bottom: 0.25rem;
+    font-size: 1.2rem;
+  }
+
+  .newspaper-article p {
+    font-family: 'Times New Roman', serif;
+    font-size: 1.0rem;
+    line-height: 1.5;
+    text-align: justify;
+    margin-bottom: 1rem;
+    color: var(--vintage-ink);
+    text-indent: 0;
+  }
+
+  /* Remove card-like styling for newspaper layout */
+  .newspaper-article .newspaper-card {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  .newspaper-article .newspaper-card:hover {
+    background: none !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Grid column alternation for proper 2-column layout */
+  @media (min-width: 768px) {
+    .newspaper-article:nth-child(odd) {
+      grid-column: 1;
+    }
+    
+    .newspaper-article:nth-child(even) {
+      grid-column: 3;
+    }
+  }
+
+  /* Optimize section height */
+  .newspaper-section {
+    min-height: auto;
+    padding: 0.75rem 0;
+  }
+  
+  /* Extra compact for mb-2 sections */
+  .newspaper-section.mb-2 {
+    padding: 0.125rem 0;
+  }
+
+  /* Better content distribution */
+  .newspaper-article .article-content > div:last-child {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+  }
+
+  /* Compact sections - reduce spacing for non-news sections */
+  .newspaper-section.mb-2 .newspaper-columns .newspaper-article {
+    min-height: 50px;
+    margin-bottom: 0.125rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .newspaper-section.mb-2 .newspaper-columns .newspaper-article h3 {
+    font-size: 0.9rem;
+    margin-bottom: 0.125rem;
+    line-height: 1.1;
+  }
+
+  .newspaper-section.mb-2 .newspaper-columns .newspaper-article p {
+    font-size: 0.8rem;
+    line-height: 1.2;
+    margin-bottom: 0.125rem;
+  }
+
+  .newspaper-stats {
+    background: rgba(212,193,160,0.15) !important;
+    background-image: 
+      radial-gradient(circle at 50% 50%, rgba(166,149,112,0.08) 0%, transparent 60%);
+    font-family: 'Times New Roman', serif;
+    border: 1px solid var(--paper-stain-medium);
+    box-shadow: 
+      1px 1px 3px var(--paper-tear-shadow), 
+      inset 0 0 6px rgba(192,168,130,0.08);
+    color: var(--vintage-ink);
+    backdrop-filter: none;
+  }
+
+  .newspaper-article {
+    column-count: 2;
+    column-gap: 30px;
+    column-rule: 1px solid #ccc;
+    text-align: justify;
+    font-family: 'Times New Roman', serif;
+    line-height: 1.6;
+  }
+
+  .newspaper-quick-action {
+    background: rgba(212,193,160,0.25) !important;
+    background-image: 
+      radial-gradient(circle at 50% 50%, rgba(166,149,112,0.1) 0%, transparent 60%);
+    border: 1px solid var(--paper-stain-medium);
+    box-shadow: 
+      1px 1px 4px var(--paper-tear-shadow), 
+      inset 0 0 6px rgba(192,168,130,0.08);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: var(--vintage-ink) !important;
+    position: relative;
+    backdrop-filter: none;
+  }
+
+  .newspaper-quick-action::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(30deg, transparent 0px, rgba(166,149,112,0.01) 1px, transparent 4px);
+    pointer-events: none;
+  }
+
+  .newspaper-quick-action:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 
+      2px 2px 6px var(--paper-tear-shadow), 
+      inset 0 0 8px rgba(192,168,130,0.12);
+    background: rgba(212,193,160,0.35) !important;
+    color: var(--vintage-ink-dark) !important;
+    text-decoration: none;
+  }
+
+  /* Breaking News Enhancements */
+  .breaking-news-flash {
+    animation: flash 2s infinite;
+  }
+
+  .breaking-news-pulse {
+    animation: pulse-urgent 1.5s infinite;
+  }
+
+  .breaking-news-glow {
+    box-shadow: 0 0 20px rgba(220, 38, 127, 0.5);
+  }
+
+  @keyframes flash {
+    0%, 50%, 100% { opacity: 1; }
+    25%, 75% { opacity: 0.7; }
+  }
+
+  @keyframes pulse-urgent {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+  }
+
+  .hover\:scale-102:hover {
+    transform: scale(1.02);
+  }
+
+  /* Newspaper Text Border Design - Revertable Feature */
+  .newspaper-text-border {
+    position: relative;
+  }
+
+  .newspaper-text-border::before {
+    content: "🚨 BREAKING NEWS • LATEST UPDATES • VERIFIED REPORTS • POLICY ANALYSIS 🚨";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: red;
+    border-bottom: 3px solid #000;
+    font-family: 'Times New Roman', serif;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    animation: scroll-text 10s linear infinite;
+    z-index: 9999;
+    line-height: 40px;
+    letter-spacing: 2px;
+    text-align: center;
+  }
+
+  .newspaper-text-border::after {
+    content: "📰 INFOSPHERE HERALD • ESTABLISHED 2025 • DIGITAL TRUTH VERIFICATION 📰";
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: blue;
+    border-top: 3px solid #000;
+    font-family: 'Times New Roman', serif;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    animation: scroll-text-reverse 8s linear infinite;
+    z-index: 9999;
+    line-height: 40px;
+    letter-spacing: 2px;
+    text-align: center;
+  }
+
+  .newspaper-side-borders {
+    position: relative;
+  }
+
+  .newspaper-side-borders::before {
+    content: "THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD THE INFOSPHERE HERALD";
+    position: fixed;
+    top: 30px;
+    left: 0;
+    bottom: 30px;
+    width: 25px;
+    background: linear-gradient(180deg, #f5f5dc 0%, #fff 50%, #f5f5dc 100%);
+    border-right: 2px solid #000;
+    font-family: 'Times New Roman', serif;
+    font-size: 9px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    animation: scroll-text-vertical 40s linear infinite;
+    z-index: 1000;
+    line-height: 12px;
+    letter-spacing: 1px;
+  }
+
+  .newspaper-side-borders::after {
+    content: "DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY DIGITAL NEWS INTEGRITY";
+    position: fixed;
+    top: 30px;
+    right: 0;
+    bottom: 30px;
+    width: 25px;
+    background: linear-gradient(180deg, #f5f5dc 0%, #fff 50%, #f5f5dc 100%);
+    border-left: 2px solid #000;
+    font-family: 'Times New Roman', serif;
+    font-size: 9px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    animation: scroll-text-vertical-reverse 35s linear infinite;
+    z-index: 1000;
+    line-height: 12px;
+    letter-spacing: 1px;
+  }
+
+  @keyframes scroll-text {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+  }
+
+  @keyframes scroll-text-reverse {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  @keyframes scroll-text-vertical {
+    0% { transform: translateY(100%); }
+    100% { transform: translateY(-100%); }
+  }
+
+  @keyframes scroll-text-vertical-reverse {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+  }
+
+  /* Content adjustment when borders are active */
+  .newspaper-text-border {
+    padding-top: 50px;
+    padding-bottom: 50px;
+  }
+
+  .newspaper-side-borders {
+    padding-left: 35px;
+    padding-right: 35px;
+  }
+
+  /* Newspaper Border Animations */
+  .animate-scroll-left {
+    animation: scrollLeft 30s linear infinite;
+  }
+
+  .animate-scroll-right {
+    animation: scrollRight 25s linear infinite;
+  }
+
+  .vertical-text-left {
+    writing-mode: vertical-lr;
+    text-orientation: mixed;
+    animation: scrollUp 20s linear infinite;
+  }
+
+  .vertical-text-right {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    animation: scrollDown 15s linear infinite;
+  }
+
+  @keyframes scrollLeft {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+  }
+
+  @keyframes scrollRight {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  @keyframes scrollUp {
+    0% { transform: translateY(100%); }
+    100% { transform: translateY(-100%); }
+  }
+
+  @keyframes scrollDown {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+  }
+}
+
+/* Enhanced Vintage Typography */
+.newspaper-headline {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  color: var(--vintage-ink);
+  text-shadow: 
+    1px 1px 2px var(--vintage-shadow),
+    0 0 4px rgba(93,64,55,0.2);
+  letter-spacing: -0.5px;
+}
+
+/* Enhanced vintage text elements */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--vintage-ink) !important;
+  text-shadow: 0.5px 0.5px 1px rgba(93,64,55,0.3);
+}
+
+/* Enhanced paragraph text */
+p {
+  color: var(--vintage-ink-light);
+  text-shadow: 0.25px 0.25px 0.5px rgba(93,64,55,0.1);
+}
+
+/* Enhanced link styling */
+a {
+  color: var(--vintage-brown-dark) !important;
+  text-decoration-color: var(--vintage-border);
+}
+
+a:hover {
+  color: var(--vintage-ink) !important;
+  text-shadow: 0.5px 0.5px 1px rgba(93,64,55,0.2);
+}
+
+/* Global old paper background for entire application */
+.App, #root, html, body {
+  background: var(--old-paper) !important;
+  background-image: 
+    /* Main torn paper texture matching the image */
+    radial-gradient(circle at 15% 20%, var(--paper-stain-medium) 0%, transparent 25%),
+    radial-gradient(circle at 85% 80%, var(--paper-stain-light) 0%, transparent 30%),
+    radial-gradient(circle at 45% 60%, var(--paper-stain-dark) 0%, transparent 20%),
+    radial-gradient(circle at 70% 15%, var(--paper-age-spot) 0%, transparent 15%),
+    radial-gradient(circle at 25% 85%, var(--paper-crease) 0%, transparent 18%),
+    /* Additional aging and texture */
+    repeating-linear-gradient(0deg, transparent 0px, rgba(192,168,130,0.04) 2px, transparent 4px),
+    repeating-linear-gradient(90deg, transparent 0px, rgba(166,149,112,0.03) 3px, transparent 6px),
+    /* Subtle staining patterns */
+    radial-gradient(ellipse 400px 200px at 20% 40%, rgba(192,168,130,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 300px 150px at 80% 70%, rgba(212,193,160,0.06) 0%, transparent 50%),
+    /* Paper fiber and grain */
+    linear-gradient(135deg, transparent 48%, rgba(192,168,130,0.02) 50%, transparent 52%) !important;
+  background-size: 
+    200px 180px,
+    250px 220px,
+    180px 160px,
+    120px 100px,
+    160px 140px,
+    8px 8px,
+    12px 12px,
+    600px 400px,
+    500px 300px,
+    100% 100% !important;
+  background-attachment: fixed !important;
+  min-height: 100vh !important;
+}
+
+/* Enhanced paper overlay for deeper authenticity */
+.App::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    /* Additional torn paper effects */
+    radial-gradient(circle at 35% 25%, rgba(192,168,130,0.12) 0%, transparent 20%),
+    radial-gradient(circle at 75% 65%, rgba(166,149,112,0.1) 0%, transparent 25%),
+    radial-gradient(circle at 15% 85%, rgba(212,193,160,0.08) 0%, transparent 30%),
+    /* Crease and fold lines */
+    linear-gradient(45deg, transparent 49%, rgba(166,149,112,0.06) 50%, transparent 51%),
+    linear-gradient(-45deg, transparent 49%, rgba(192,168,130,0.04) 50%, transparent 51%);
+  pointer-events: none;
+  z-index: -10;
+}
+
+/* Vintage text elements */
+.vintage-text {
+  color: var(--vintage-ink);
+  text-shadow: 0.5px 0.5px 1px rgba(101,67,33,0.2);
+}
+
+/* Enhanced aged paper borders and elements */
+.aged-border {
+  border: 1px solid var(--vintage-border);
+  box-shadow: 
+    inset 0 0 10px var(--vintage-stain),
+    0 1px 3px var(--vintage-shadow);
+}
+
+/* Enhanced button styling blending with paper */
+button {
+  background: rgba(192,168,130,0.3) !important;
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(166,149,112,0.15) 0%, transparent 60%);
+  border: 1px solid var(--paper-stain-medium) !important;
+  color: var(--vintage-ink) !important;
+  box-shadow: 
+    1px 1px 3px var(--paper-tear-shadow), 
+    inset 0 1px 2px rgba(212,193,160,0.2);
+  text-shadow: 0.5px 0.5px 1px rgba(192,168,130,0.3);
+  transition: all 0.3s ease;
+  backdrop-filter: none;
+}
+
+button:hover {
+  background: rgba(192,168,130,0.4) !important;
+  transform: translateY(-1px);
+  box-shadow: 
+    2px 2px 4px var(--paper-tear-shadow), 
+    inset 0 1px 3px rgba(212,193,160,0.25);
+}
+
+/* Enhanced input styling blending with paper */
+input, textarea, select {
+  background: rgba(212,193,160,0.2) !important;
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(166,149,112,0.06) 0%, transparent 70%);
+  border: 1px solid var(--paper-stain-medium) !important;
+  color: var(--vintage-ink) !important;
+  box-shadow: 
+    inset 1px 1px 3px rgba(166,149,112,0.1), 
+    0 1px 2px rgba(192,168,130,0.15);
+  backdrop-filter: none;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none !important;
+  border-color: var(--paper-stain-dark) !important;
+  box-shadow: 
+    inset 1px 1px 4px rgba(166,149,112,0.15), 
+    0 0 0 1px rgba(192,168,130,0.3);
+}

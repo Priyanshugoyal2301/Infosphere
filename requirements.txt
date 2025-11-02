@@ -1,0 +1,50 @@
+# Core ML/AI Libraries
+torch>=1.13.0
+torchvision>=0.14.0
+transformers>=4.25.0
+sentence-transformers>=2.2.0
+tensorflow>=2.11.0
+onnxruntime>=1.13.0
+
+# Computer Vision & Face Detection
+opencv-python>=4.7.0
+mtcnn>=0.1.1
+Pillow>=9.4.0
+
+# Backend Framework
+fastapi>=0.88.0
+uvicorn[standard]>=0.20.0
+python-multipart>=0.0.5
+
+# Database & ORM
+sqlmodel>=0.0.8
+psycopg2-binary>=2.9.5
+alembic>=1.9.0
+
+# Data Processing & ML Utils
+pandas>=1.5.0
+numpy>=1.24.0
+scikit-learn>=1.2.0
+datasets>=2.8.0
+
+# Caching & Task Queue
+redis>=4.5.0
+celery>=5.2.0
+
+# HTTP & API
+httpx>=0.23.0
+pydantic>=1.10.0
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+
+# Utilities
+python-dotenv>=0.21.0
+tqdm>=4.64.0
+matplotlib>=3.6.0
+seaborn>=0.12.0
+
+# Development & Testing
+pytest>=7.2.0
+pytest-asyncio>=0.20.0
+black>=22.12.0
+flake8>=6.0.0

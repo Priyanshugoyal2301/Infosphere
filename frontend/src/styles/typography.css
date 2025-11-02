@@ -1,0 +1,77 @@
+/* Typography Control Classes - Reversible Typography System */
+
+/* Variable definitions for easy reversal */
+:root {
+  /* Typography control - boolean values don't work with ternary in CSS */
+  --newspaper-font-family: 'Playfair Display', serif;
+  --content-font-family: 'Georgia', serif;
+}
+
+/* Alternative approach using classes for easier toggling */
+.enhanced-typography .section-title,
+.enhanced-typography .card-title,
+.enhanced-typography .header-text,
+.enhanced-typography h1,
+.enhanced-typography h2,
+.enhanced-typography h3,
+.enhanced-typography h4,
+.enhanced-typography h5,
+.enhanced-typography .title {
+  font-weight: 900 !important;
+  font-family: 'Playfair Display', serif !important;
+}
+
+.enhanced-typography .section-content,
+.enhanced-typography .card-content,
+.enhanced-typography .description,
+.enhanced-typography .text-content,
+.enhanced-typography p:not(.title):not(.header-text),
+.enhanced-typography .content {
+  font-style: italic !important;
+  font-family: 'Georgia', serif !important;
+}
+
+/* Normal typography (for easy reversal) */
+.normal-typography .section-title,
+.normal-typography .card-title,
+.normal-typography .header-text,
+.normal-typography h1,
+.normal-typography h2,
+.normal-typography h3,
+.normal-typography h4,
+.normal-typography h5,
+.normal-typography .title {
+  font-weight: normal !important;
+  font-family: inherit !important;
+}
+
+.normal-typography .section-content,
+.normal-typography .card-content,
+.normal-typography .description,
+.normal-typography .text-content,
+.normal-typography p:not(.title):not(.header-text),
+.normal-typography .content {
+  font-style: normal !important;
+  font-family: inherit !important;
+}
+
+/* Specific classes for precise control */
+.bold-title {
+  font-weight: 900;
+  font-family: 'Playfair Display', serif;
+}
+
+.italic-content {
+  font-style: italic;
+  font-family: 'Georgia', serif;
+}
+
+.normal-title {
+  font-weight: normal;
+  font-family: inherit;
+}
+
+.normal-content {
+  font-style: normal;
+  font-family: inherit;
+}
