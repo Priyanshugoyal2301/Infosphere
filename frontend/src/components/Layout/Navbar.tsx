@@ -25,7 +25,7 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="bg-white border-t-4 border-b-4 border-black newspaper-bg relative z-30 mt-8">
+    <nav className="border-t-4 border-b-4 border-black newspaper-bg relative z-30 mt-8" style={{background: '#e8dcc8'}}>
       <div className="container mx-auto px-4">
         {/* Main Header */}
         <div className="border-b-2 border-black py-2">

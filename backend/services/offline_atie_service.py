@@ -13,11 +13,17 @@ import hashlib
 import logging
 from typing import Dict, List, Optional, Union, Any
 from datetime import datetime
-import numpy as np
 
 # Basic imports that don't require model downloads
-from transformers import pipeline
-import torch
+# Optional heavy libs (not required for offline mode). Avoid hard dependency for faster dev startup.
+try:
+    from transformers import pipeline  # type: ignore
+    import torch  # type: ignore
+except Exception:
+    pipeline = None  # noqa: F401
+    torch = None  # noqa: F401
+    logger = logging.getLogger(__name__)
+    logger.info("Running offline ATIE without transformers/torch (not needed in offline mode)")
 
 logger = logging.getLogger(__name__)
 

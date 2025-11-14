@@ -149,7 +149,7 @@ const RealTimeNews: React.FC = () => {
       {
         id: 1,
         title: 'Delhi Air Quality Worsens to Severe Category',
-        content: 'Air Quality Index crosses 450 in several areas of the capital with visibility dropping to less than 50 meters. Authorities have imposed restrictions on construction activities and advised residents to stay indoors.',
+        content: 'Air Quality Index crosses 450 in several areas of the capital with visibility dropping to less than 50 meters. Authorities have imposed restrictions on construction activities and advised residents to stay indoors. The pollution levels have been attributed to stubble burning in neighboring states, vehicular emissions, and unfavorable meteorological conditions. Medical experts are warning of increased respiratory problems, particularly affecting children and elderly citizens. The Central Pollution Control Board has issued health advisories recommending the use of N95 masks and limiting outdoor activities. Schools in several districts have been ordered to remain closed until air quality improves. Emergency measures including odd-even vehicle rationing are being considered by the state government.',
         source: 'Times of India',
         category: 'Weather',
         published_date: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(),
@@ -161,7 +161,7 @@ const RealTimeNews: React.FC = () => {
       {
         id: 2,
         title: 'Multi-vehicle Collision on Chennai-Bangalore Expressway',
-        content: 'Dense fog conditions lead to a massive chain collision involving 8 vehicles including trucks and passenger cars. Three people have been hospitalized with minor injuries.',
+        content: 'Dense fog conditions lead to a massive chain collision involving 8 vehicles including trucks and passenger cars. Three people have been hospitalized with minor injuries. The incident occurred around 5:30 AM near the Kolar district, when visibility dropped below 10 meters due to thick fog. Emergency services responded swiftly, with ambulances and highway patrol teams reaching the site within minutes. Traffic was diverted through alternative routes for nearly four hours while rescue operations were underway. Eyewitnesses reported that the first collision triggered a chain reaction as vehicles behind could not stop in time. Highway authorities are now reviewing the installation of additional fog warning systems and speed limit enforcement measures along this stretch of the expressway.',
         source: 'Indian Express',
         category: 'Accident',
         published_date: new Date(now.getTime() - 5 * 60 * 60 * 1000).toISOString(),
@@ -173,7 +173,7 @@ const RealTimeNews: React.FC = () => {
       {
         id: 3,
         title: 'Mumbai Police Arrest Gang in Cyber Fraud Case',
-        content: 'Mumbai Police\'s Cyber Crime Cell arrests a 5-member gang involved in online banking fraud worth ₹2.3 crores. The gang used sophisticated phishing techniques to target senior citizens.',
+        content: 'Mumbai Police\'s Cyber Crime Cell arrests a 5-member gang involved in online banking fraud worth ₹2.3 crores. The gang used sophisticated phishing techniques to target senior citizens across multiple cities. The arrested individuals, aged between 24 and 35, had been operating from a rented apartment in Thane for the past eight months. They created fake banking websites that closely mimicked legitimate bank portals, sending deceptive SMS and email messages to potential victims. Police have recovered laptops, mobile phones, and documents containing details of over 200 victims. The investigation revealed international connections, with some proceeds being transferred to accounts in Southeast Asian countries. Authorities are working with banks to freeze affected accounts and return funds to victims. Cybersecurity experts emphasize the importance of verifying website URLs and never sharing OTPs with anyone.',
         source: 'NDTV',
         category: 'Crime',
         published_date: new Date(now.getTime() - 3 * 60 * 60 * 1000).toISOString(),
@@ -185,7 +185,7 @@ const RealTimeNews: React.FC = () => {
       {
         id: 4,
         title: 'Bangalore Tech Summit 2025 Begins Today',
-        content: 'The annual Bangalore Tech Summit kicks off with participation from over 200 global tech companies. Key sessions include AI innovations, sustainable technology, and startup ecosystem discussions.',
+        content: 'The annual Bangalore Tech Summit kicks off with participation from over 200 global tech companies. Key sessions include AI innovations, sustainable technology, and startup ecosystem discussions. This year\'s summit focuses on emerging technologies including artificial intelligence, quantum computing, blockchain applications, and green technology solutions. Major tech giants including Google, Microsoft, Amazon, and several Indian unicorns are showcasing their latest innovations. The three-day event features over 50 keynote sessions, panel discussions with industry leaders, and networking opportunities for startups seeking investment. Karnataka\'s Chief Minister inaugurated the summit, highlighting the state\'s position as India\'s premier technology hub. Special pavilions dedicated to AI-powered healthcare solutions, fintech innovations, and sustainable energy technologies are attracting significant attention. Over 10,000 delegates from 40 countries are expected to attend.',
         source: 'The Hindu',
         category: 'Event',
         published_date: new Date(now.getTime() - 1 * 60 * 60 * 1000).toISOString(),
@@ -197,7 +197,7 @@ const RealTimeNews: React.FC = () => {
       {
         id: 5,
         title: 'Cyclone Alert Issued for Odisha and West Bengal Coasts',
-        content: 'India Meteorological Department issues cyclone alert for Odisha and West Bengal coasts. The depression in Bay of Bengal is expected to intensify into a cyclonic storm.',
+        content: 'India Meteorological Department issues cyclone alert for Odisha and West Bengal coasts. The depression in Bay of Bengal is expected to intensify into a cyclonic storm within the next 24 hours. Coastal districts in both states have been put on high alert with fishing activities suspended. The IMD predicts wind speeds reaching 80-90 km/h with heavy to very heavy rainfall expected in multiple districts. State disaster management authorities have activated emergency response teams and established control rooms to monitor the situation. Evacuation plans are being prepared for low-lying coastal areas, and temporary relief camps are being set up. The Navy and Coast Guard have positioned ships and helicopters for potential rescue operations. Agricultural authorities are advising farmers to harvest standing crops where possible. The cyclone is expected to make landfall near Paradip on Saturday evening.',
         source: 'Indian Express',
         category: 'Weather',
         published_date: new Date(now.getTime() - 4 * 60 * 60 * 1000).toISOString(),
@@ -209,7 +209,7 @@ const RealTimeNews: React.FC = () => {
       {
         id: 6,
         title: 'Railway Ministry Announces New High-Speed Rail Project',
-        content: 'Railway Ministry announces a new high-speed rail corridor connecting Delhi, Mumbai, and Chennai. The project, estimated at ₹1.2 lakh crores, aims to reduce travel time by 60%.',
+        content: 'Railway Ministry announces a new high-speed rail corridor connecting Delhi, Mumbai, and Chennai. The project, estimated at ₹1.2 lakh crores, aims to reduce travel time by 60%. The ambitious infrastructure project will feature trains operating at speeds up to 320 km/h, incorporating Japanese bullet train technology. The Delhi-Mumbai corridor is expected to be completed first, reducing travel time from 16 hours to just 6 hours. The project includes the construction of 12 new high-speed railway stations with world-class amenities. Environmental clearances are being fast-tracked, with work expected to begin in the next quarter. The ministry has assured that land acquisition will be completed with fair compensation to affected parties. International experts from Japan and France are providing technical consultancy. The project is expected to create over 50,000 jobs during construction and significantly boost economic connectivity between major metropolitan areas.',
         source: 'Times of India',
         category: 'Event',
         published_date: new Date(now.getTime() - 6 * 60 * 60 * 1000).toISOString(),
@@ -221,7 +221,7 @@ const RealTimeNews: React.FC = () => {
       {
         id: 7,
         title: 'Fire Breaks Out at Industrial Complex in Pune',
-        content: 'A massive fire broke out at an industrial complex in Pune\'s Pimpri-Chinchwad area. 15 fire tenders rushed to the spot to control the blaze. No casualties reported so far.',
+        content: 'A massive fire broke out at an industrial complex in Pune\'s Pimpri-Chinchwad area. 15 fire tenders rushed to the spot to control the blaze. No casualties reported so far. The fire started around 3 PM in a chemical storage facility and quickly spread to adjacent manufacturing units. Thick smoke could be seen from several kilometers away, prompting authorities to issue safety advisories for nearby residential areas. Fire brigade officials worked for over four hours to bring the flames under control. The cause of the fire is being investigated, with preliminary reports suggesting a possible electrical short circuit. Factory management has been questioned, and compliance with fire safety regulations is being reviewed. The state industrial safety department has ordered a comprehensive audit of all facilities in the industrial zone. Damage is estimated to run into several crores, with multiple manufacturing units affected.',
         source: 'NDTV',
         category: 'Accident',
         published_date: new Date(now.getTime() - 8 * 60 * 60 * 1000).toISOString(),
@@ -233,7 +233,7 @@ const RealTimeNews: React.FC = () => {
       {
         id: 8,
         title: 'Supreme Court Hearing on Digital Privacy Rights',
-        content: 'Supreme Court begins crucial hearing on digital privacy rights and data protection laws. The bench is examining petitions challenging certain provisions of the Digital Personal Data Protection Act.',
+        content: 'Supreme Court begins crucial hearing on digital privacy rights and data protection laws. The bench is examining petitions challenging certain provisions of the Digital Personal Data Protection Act. Civil rights organizations and tech companies have presented arguments regarding the balance between data protection and government surveillance. The five-judge constitution bench, headed by the Chief Justice, is hearing arguments for the third consecutive day. Key concerns include mandatory data localization requirements, government access to personal information, and the adequacy of user consent mechanisms. Several privacy advocates argue that certain provisions could enable mass surveillance without adequate judicial oversight. Technology companies have expressed concerns about compliance costs and operational challenges. The court has sought detailed responses from the Ministry of Electronics and Information Technology. Legal experts believe this case could set important precedents for digital rights in India, with far-reaching implications for millions of internet users.',
         source: 'The Hindu',
         category: 'Event',
         published_date: new Date(now.getTime() - 7 * 60 * 60 * 1000).toISOString(),

@@ -250,21 +250,21 @@ Sources: Times of India RSS, NDTV Live Feed, Indian Express API...`);
       <div className="space-y-8 px-4">
 
       {/* Headlines Section */}
-      <div className="newspaper-section mb-8">
-        <h2 className="newspaper-section-title text-3xl font-black text-black border-b-2 border-black pb-2 mb-6">
+      <div className="newspaper-section mb-4">
+        <h2 className="newspaper-section-title text-2xl font-black text-black border-b-2 border-black pb-2 mb-4">
           TODAY'S NEWS INTELLIGENCE BRIEFING
         </h2>
         
         {/* Compact stat cards in horizontal row */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-3 gap-3 mb-4">
           <div className="newspaper-card">
             <div className="newspaper-card-header">
-              <h3 className="text-sm font-black text-black">NEWS REPORTS</h3>
+              <h3 className="text-xs font-black text-white" style={{color: '#ffffff !important'}}>NEWS REPORTS</h3>
             </div>
-            <div className="flex items-center justify-between p-3">
+            <div className="flex items-center justify-between p-2">
               <div>
                 <p className="text-xs font-bold text-black uppercase tracking-wide">Total</p>
-                <p className="text-2xl font-black text-black">{stats.totalIssues.toLocaleString()}</p>
+                <p className="text-xl font-black text-black">{stats.totalIssues.toLocaleString()}</p>
               </div>
               <div className="text-2xl opacity-60">📊</div>
             </div>
@@ -278,12 +278,12 @@ Sources: Times of India RSS, NDTV Live Feed, Indian Express API...`);
 
           <div className="newspaper-card">
             <div className="newspaper-card-header">
-              <h3 className="text-sm font-black text-black">MEDIA VERIFICATION</h3>
+              <h3 className="text-xs font-black text-white" style={{color: '#ffffff !important'}}>MEDIA VERIFICATION</h3>
             </div>
-            <div className="flex items-center justify-between p-3">
+            <div className="flex items-center justify-between p-2">
               <div>
                 <p className="text-xs font-bold text-black uppercase tracking-wide">Files</p>
-                <p className="text-2xl font-black text-black">{stats.mediaVerified.toLocaleString()}</p>
+                <p className="text-xl font-black text-black">{stats.mediaVerified.toLocaleString()}</p>
               </div>
               <div className="text-2xl opacity-60">🔍</div>
             </div>
@@ -303,12 +303,12 @@ Sources: Times of India RSS, NDTV Live Feed, Indian Express API...`);
 
           <div className="newspaper-card">
             <div className="newspaper-card-header">
-              <h3 className="text-sm font-black text-black">POLICY WATCH</h3>
+              <h3 className="text-xs font-black text-white" style={{color: '#ffffff !important'}}>POLICY WATCH</h3>
             </div>
-            <div className="flex items-center justify-between p-3">
+            <div className="flex items-center justify-between p-2">
               <div>
                 <p className="text-xs font-bold text-black uppercase tracking-wide">Active</p>
-                <p className="text-2xl font-black text-black">{stats.activePolicies}</p>
+                <p className="text-xl font-black text-black">{stats.activePolicies}</p>
               </div>
               <div className="text-2xl opacity-60">📋</div>
             </div>
@@ -333,11 +333,11 @@ Sources: Times of India RSS, NDTV Live Feed, Indian Express API...`);
       {/* News Intelligence Command Center */}
       <div className="newspaper-section-classic">
         <div className="newspaper-header-classic">
-          <h2 className="newspaper-title-classic bold-title">News Intelligence Command Center</h2>
+          <h2 className="newspaper-title-classic bold-title" style={{color: '#ffffff !important'}}>News Intelligence Command Center</h2>
           <div className="newspaper-subtitle-classic italic-content">Real-Time • AI-Powered • Verified</div>
         </div>
         <div className="newspaper-content-classic">
-          <div className="flex justify-end mb-4">
+          <div className="flex justify-end mb-3">
             <Link to="/news" className="control-button-classic">
               Full View →
             </Link>
@@ -346,55 +346,55 @@ Sources: Times of India RSS, NDTV Live Feed, Indian Express API...`);
           {/* News Statistics Grid */}
           <div className="stats-grid-classic">
             <div className="stat-card-classic">
-              <h4 className="bold-title">Total Articles</h4>
+              <h4 className="bold-title" style={{color: '#1a1a1a !important'}}>Total Articles</h4>
               <div className="stat-number-classic">{newsStats.totalArticles.toLocaleString()}</div>
               <div className="stat-label-classic italic-content">All Time Collection</div>
             </div>
 
             <div className="stat-card-classic">
-              <h4 className="bold-title">Today's Count</h4>
+              <h4 className="bold-title" style={{color: '#1a1a1a !important'}}>Today's Count</h4>
               <div className="stat-number-classic">{newsStats.todayArticles}</div>
               <div className="stat-label-classic italic-content">Fresh Updates</div>
             </div>
 
             <div className="stat-card-classic">
-              <h4 className="bold-title">Live Feeds</h4>
-              <div className="stat-number-classic" style={{fontSize: '1.2rem', color: serviceRunning ? '#22c55e' : '#ef4444'}}>
+              <h4 className="bold-title" style={{color: '#1a1a1a !important'}}>Live Feeds</h4>
+              <div className="stat-number-classic" style={{fontSize: '1.0rem', color: serviceRunning ? '#22c55e' : '#ef4444'}}>
                 {serviceRunning ? '🟢 RSS ACTIVE' : '🔴 OFFLINE'}
               </div>
               <div className="stat-label-classic italic-content">Real-time Monitoring</div>
             </div>
 
             <div className="stat-card-classic">
-              <h4 className="bold-title">Last Fetch</h4>
-              <div className="stat-number-classic" style={{fontSize: '1rem'}}>{newsStats.lastFetch}</div>
+              <h4 className="bold-title" style={{color: '#1a1a1a !important'}}>Last Fetch</h4>
+              <div className="stat-number-classic" style={{fontSize: '0.9rem'}}>{newsStats.lastFetch}</div>
               <div className="stat-label-classic italic-content">Latest Update Time</div>
             </div>
           </div>
 
           {/* Category Distribution */}
-          <div style={{marginTop: '30px'}}>
-            <h3 className="newspaper-title-classic bold-title" style={{fontSize: '1.2rem', marginBottom: '20px', textAlign: 'left'}}>
+          <div style={{marginTop: '15px', background: '#1a1a1a', padding: '12px 15px', marginLeft: '-20px', marginRight: '-20px'}}>
+            <h3 className="newspaper-title-classic bold-title" style={{fontSize: '1.1rem', marginBottom: '12px', textAlign: 'center', color: '#ffffff !important'}}>
               Category Intelligence Breakdown
             </h3>
             <div className="stats-grid-classic">
               <div className="stat-card-classic">
-                <h4 className="bold-title">Crime</h4>
+                <h4 className="bold-title" style={{color: '#1a1a1a !important'}}>Crime</h4>
                 <div className="stat-number-classic" style={{color: '#dc2626'}}>{newsStats.categoryCounts.crime}</div>
                 <div className="stat-label-classic italic-content">🚨 Criminal Affairs</div>
               </div>
               <div className="stat-card-classic">
-                <h4 className="bold-title">Accidents</h4>
+                <h4 className="bold-title" style={{color: '#1a1a1a !important'}}>Accidents</h4>
                 <div className="stat-number-classic" style={{color: '#ea580c'}}>{newsStats.categoryCounts.accident}</div>
                 <div className="stat-label-classic italic-content">🚗 Traffic & Safety</div>
               </div>
               <div className="stat-card-classic">
-                <h4 className="bold-title">Events</h4>
+                <h4 className="bold-title" style={{color: '#1a1a1a !important'}}>Events</h4>
                 <div className="stat-number-classic" style={{color: '#2563eb'}}>{newsStats.categoryCounts.event}</div>
                 <div className="stat-label-classic italic-content">🎉 Social Events</div>
               </div>
               <div className="stat-card-classic">
-                <h4 className="bold-title">Weather</h4>
+                <h4 className="bold-title" style={{color: '#1a1a1a !important'}}>Weather</h4>
                 <div className="stat-number-classic" style={{color: '#16a34a'}}>{newsStats.categoryCounts.weather}</div>
                 <div className="stat-label-classic italic-content">🌤️ Weather Reports</div>
               </div>
@@ -406,7 +406,7 @@ Sources: Times of India RSS, NDTV Live Feed, Indian Express API...`);
       {/* News Service Control Panel */}
       <div className="newspaper-section-classic">
         <div className="newspaper-header-classic">
-          <h3 className="newspaper-title-classic bold-title">News Service Control Panel</h3>
+          <h3 className="newspaper-title-classic bold-title" style={{color: '#ffffff !important'}}>News Service Control Panel</h3>
           <div className="newspaper-subtitle-classic italic-content">System Operations & Management</div>
         </div>
         <div className="newspaper-content-classic">
@@ -435,15 +435,69 @@ Sources: Times of India RSS, NDTV Live Feed, Indian Express API...`);
             </button>
           </div>
           
-          <div className="sources-list-classic">
-            <div className="sources-title-classic bold-title">📡 Active News Sources:</div>
-            <div className="sources-grid-classic italic-content">
-              <span>• Times of India RSS</span>
-              <span>• Hindustan Times RSS</span>
-              <span>• Indian Express RSS</span>
-              <span>• NDTV News RSS</span>
-              <span>• CNN-IBN RSS</span>
-              <span>• India Today RSS</span>
+          <div className="sources-list-classic-enhanced">
+            <div className="sources-title-classic-enhanced bold-title" style={{color: '#1a1a1a !important'}}>📡 ACTIVE NEWS SOURCES:</div>
+            <div className="sources-grid-classic-enhanced">
+              <div className="source-item-enhanced">
+                <span className="source-icon">📰</span>
+                <span className="source-name">Times of India RSS</span>
+                <span className="source-status">● LIVE</span>
+              </div>
+              <div className="source-item-enhanced">
+                <span className="source-icon">📺</span>
+                <span className="source-name">Hindustan Times RSS</span>
+                <span className="source-status">● LIVE</span>
+              </div>
+              <div className="source-item-enhanced">
+                <span className="source-icon">🗞️</span>
+                <span className="source-name">Indian Express RSS</span>
+                <span className="source-status">● LIVE</span>
+              </div>
+              <div className="source-item-enhanced">
+                <span className="source-icon">📡</span>
+                <span className="source-name">NDTV News RSS</span>
+                <span className="source-status">● LIVE</span>
+              </div>
+              <div className="source-item-enhanced">
+                <span className="source-icon">🌐</span>
+                <span className="source-name">CNN-IBN RSS</span>
+                <span className="source-status">● LIVE</span>
+              </div>
+              <div className="source-item-enhanced">
+                <span className="source-icon">📻</span>
+                <span className="source-name">India Today RSS</span>
+                <span className="source-status">● LIVE</span>
+              </div>
+              <div className="source-item-enhanced">
+                <span className="source-icon">📱</span>
+                <span className="source-name">The Hindu RSS</span>
+                <span className="source-status">● LIVE</span>
+              </div>
+              <div className="source-item-enhanced">
+                <span className="source-icon">💻</span>
+                <span className="source-name">Business Standard</span>
+                <span className="source-status">● LIVE</span>
+              </div>
+              <div className="source-item-enhanced">
+                <span className="source-icon">🎯</span>
+                <span className="source-name">ANI News Feed</span>
+                <span className="source-status">● LIVE</span>
+              </div>
+              <div className="source-item-enhanced">
+                <span className="source-icon">🔴</span>
+                <span className="source-name">Republic TV RSS</span>
+                <span className="source-status">● LIVE</span>
+              </div>
+              <div className="source-item-enhanced">
+                <span className="source-icon">⚡</span>
+                <span className="source-name">Zee News RSS</span>
+                <span className="source-status">● LIVE</span>
+              </div>
+              <div className="source-item-enhanced">
+                <span className="source-icon">🌟</span>
+                <span className="source-name">India TV News</span>
+                <span className="source-status">● LIVE</span>
+              </div>
             </div>
           </div>
         </div>
@@ -451,47 +505,47 @@ Sources: Times of India RSS, NDTV Live Feed, Indian Express API...`);
 
       {/* Classified Ads / Quick Actions */}
       <div className="newspaper-section">
-        <h2 className="newspaper-section-title text-2xl font-black text-black border-b-2 border-black pb-2 mb-6">
+        <h2 className="newspaper-section-title text-xl font-black text-black border-b-2 border-black pb-2 mb-4">
           NEWS SERVICES DIRECTORY
         </h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Link to="/report" className="newspaper-quick-action p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+          <Link to="/report" className="newspaper-quick-action p-4">
             <div className="text-center">
-              <div className="text-4xl mb-3">📝</div>
-              <h3 className="bold-title font-black text-black mb-2 uppercase tracking-wide">Report News</h3>
+              <div className="text-3xl mb-2">📝</div>
+              <h3 className="bold-title font-black text-black mb-2 uppercase tracking-wide text-sm">Report News</h3>
               <div className="border-t border-black pt-2 mt-2">
-                <p className="italic-content text-sm text-black font-medium">Submit news reports with AI-powered verification system</p>
+                <p className="italic-content text-xs text-black font-medium">Submit news reports with AI-powered verification system</p>
               </div>
             </div>
           </Link>
 
-          <Link to="/verify" className="newspaper-quick-action p-6">
+          <Link to="/verify" className="newspaper-quick-action p-4">
             <div className="text-center">
-              <div className="text-4xl mb-3">🔍</div>
-              <h3 className="bold-title font-black text-black mb-2 uppercase tracking-wide">Verify Media</h3>
+              <div className="text-3xl mb-2">🔍</div>
+              <h3 className="bold-title font-black text-black mb-2 uppercase tracking-wide text-sm">Verify Media</h3>
               <div className="border-t border-black pt-2 mt-2">
-                <p className="italic-content text-sm text-black font-medium">Advanced deepfake and authenticity detection</p>
+                <p className="italic-content text-xs text-black font-medium">Advanced deepfake and authenticity detection</p>
               </div>
             </div>
           </Link>
 
-          <Link to="/analytics" className="newspaper-quick-action p-6">
+          <Link to="/analytics" className="newspaper-quick-action p-4">
             <div className="text-center">
-              <div className="text-4xl mb-3">📊</div>
-              <h3 className="bold-title font-black text-black mb-2 uppercase tracking-wide">Analytics</h3>
+              <div className="text-3xl mb-2">📊</div>
+              <h3 className="bold-title font-black text-black mb-2 uppercase tracking-wide text-sm">Analytics</h3>
               <div className="border-t border-black pt-2 mt-2">
-                <p className="italic-content text-sm text-black font-medium">News insights and AI-powered predictions</p>
+                <p className="italic-content text-xs text-black font-medium">News insights and AI-powered predictions</p>
               </div>
             </div>
           </Link>
 
-          <Link to="/policy" className="newspaper-quick-action p-6">
+          <Link to="/policy" className="newspaper-quick-action p-4">
             <div className="text-center">
-              <div className="text-4xl mb-3">📋</div>
-              <h3 className="bold-title font-black text-black mb-2 uppercase tracking-wide">Policy Hub</h3>
+              <div className="text-3xl mb-2">📋</div>
+              <h3 className="bold-title font-black text-black mb-2 uppercase tracking-wide text-sm">Policy Hub</h3>
               <div className="border-t border-black pt-2 mt-2">
-                <p className="italic-content text-sm text-black font-medium">AI-powered policy analysis and summaries</p>
+                <p className="italic-content text-xs text-black font-medium">AI-powered policy analysis and summaries</p>
               </div>
             </div>
           </Link>
@@ -500,30 +554,30 @@ Sources: Times of India RSS, NDTV Live Feed, Indian Express API...`);
 
       {/* Breaking News / Recent Issues */}
       <div className="newspaper-section bg-red-50 border-4 border-red-800 shadow-2xl">
-        <div className="flex items-center justify-between mb-6 bg-red-800 text-white p-4 -m-4 mb-4">
-          <div className="flex items-center space-x-4">
-            <div className="animate-pulse text-3xl">🚨</div>
+        <div className="flex items-center justify-between mb-3 bg-red-800 text-white p-3 -m-4 mb-3">
+          <div className="flex items-center space-x-3">
+            <div className="animate-pulse text-2xl">🚨</div>
             <div>
-              <h2 className="newspaper-section-title text-3xl font-black text-white tracking-wider">
+              <h2 className="newspaper-section-title text-2xl font-black text-white tracking-wider" style={{color: '#ffffff !important', textShadow: '2px 2px 4px rgba(0,0,0,0.8)'}}>
                 🔥 BREAKING NEWS ALERTS 🔥
               </h2>
-              <p className="text-sm font-bold text-red-200 uppercase tracking-wide">LIVE • VERIFIED • REAL-TIME</p>
+              <p className="text-xs font-bold text-red-100 uppercase tracking-wide">LIVE • VERIFIED • REAL-TIME</p>
             </div>
           </div>
-          <Link to="/track" className="bg-white text-red-800 px-6 py-3 font-black uppercase tracking-wide hover:bg-red-100 transition-colors border-2 border-red-800 animate-bounce">
+          <Link to="/track" className="bg-white text-red-800 px-5 py-2 font-black uppercase tracking-wide hover:bg-red-100 transition-colors border-2 border-red-900 text-sm" style={{color: '#991b1b !important', fontWeight: '900'}}>
             VIEW ALL →
           </Link>
         </div>
         
-        <div className="newspaper-article space-y-6">
+        <div className="newspaper-article space-y-3">
           {breakingNews.map((issue, index) => (
-            <div key={issue.id} className={`border-l-8 ${issue.urgency === 'critical' ? 'border-red-600 bg-red-50' : 'border-orange-500 bg-orange-50'} pl-6 pb-6 pt-4 pr-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-102 cursor-pointer`}>
-              <div className="flex items-start justify-between mb-3">
+            <div key={issue.id} className={`border-l-8 ${issue.urgency === 'critical' ? 'border-red-600 bg-red-50' : 'border-orange-500 bg-orange-50'} pl-4 pb-3 pt-3 pr-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-102 cursor-pointer`}>
+              <div className="flex items-start justify-between mb-2">
                 <div className="flex-1">
-                  <div className="flex items-center space-x-2 mb-2">
-                    {issue.urgency === 'critical' && <span className="text-red-600 text-xl animate-pulse">🚨</span>}
-                    {issue.category === 'Breaking' && <span className="text-orange-600 text-xl">⚡</span>}
-                    <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider ${
+                  <div className="flex items-center space-x-2 mb-1">
+                    {issue.urgency === 'critical' && <span className="text-red-600 text-lg animate-pulse">🚨</span>}
+                    {issue.category === 'Breaking' && <span className="text-orange-600 text-lg">⚡</span>}
+                    <span className={`px-2 py-1 rounded-full text-xs font-black uppercase tracking-wider ${
                       issue.category === 'Breaking' ? 'bg-red-600 text-white animate-pulse' :
                       issue.category === 'Politics' ? 'bg-blue-600 text-white' :
                       'bg-gray-800 text-white'
@@ -533,14 +587,14 @@ Sources: Times of India RSS, NDTV Live Feed, Indian Express API...`);
                     <span className="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold uppercase">LIVE</span>
                   </div>
                   
-                  <h3 className={`font-black mb-3 leading-tight ${issue.urgency === 'critical' ? 'text-2xl text-red-900' : 'text-xl text-gray-900'}`}>
+                  <h3 className={`font-black mb-2 leading-tight ${issue.urgency === 'critical' ? 'text-xl text-red-900' : 'text-lg text-gray-900'}`}>
                     {issue.title}
                   </h3>
                 </div>
               </div>
               
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4 text-sm">
+                <div className="flex items-center space-x-3 text-sm">
                   <span className={`px-3 py-1 rounded font-bold ${
                     issue.status === 'Developing' ? 'bg-red-100 text-red-800 border-2 border-red-300' : 
                     issue.status === 'Active' ? 'bg-blue-100 text-blue-800 border-2 border-blue-300' : 

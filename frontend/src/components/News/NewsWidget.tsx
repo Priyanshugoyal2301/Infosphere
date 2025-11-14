@@ -56,7 +56,7 @@ const NewsWidget: React.FC<NewsWidgetProps> = ({
       {
         id: 1,
         title: 'Breaking: Delhi Air Quality Reaches Severe Level',
-        content: 'Air pollution in Delhi has reached dangerous levels with AQI crossing 450 mark in multiple areas.',
+        content: 'Air pollution in Delhi has reached dangerous levels with AQI crossing 450 mark in multiple areas. The city is engulfed in thick smog with visibility dropping below 50 meters in several districts. Medical experts warn of serious health risks, particularly for children and elderly citizens. The government has ordered all schools to remain closed and construction activities have been suspended indefinitely. Emergency measures including odd-even vehicle schemes are being considered.',
         source: 'Times of India',
         category: 'Weather',
         published_date: new Date(now.getTime() - 1 * 60 * 60 * 1000).toISOString(),
@@ -65,7 +65,7 @@ const NewsWidget: React.FC<NewsWidgetProps> = ({
       {
         id: 2,
         title: 'Mumbai Police Arrests Cyber Fraud Gang',
-        content: 'A major cyber fraud gang involved in online banking scams worth ₹2.3 crores has been arrested.',
+        content: 'A major cyber fraud gang involved in online banking scams worth ₹2.3 crores has been arrested. The sophisticated operation targeted senior citizens across multiple cities using phishing techniques and fake banking websites. Police have recovered laptops, mobile phones, and documents containing details of over 200 victims. The investigation has revealed international connections with proceeds being transferred to Southeast Asian accounts.',
         source: 'NDTV',
         category: 'Crime',
         published_date: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(),
@@ -74,7 +74,7 @@ const NewsWidget: React.FC<NewsWidgetProps> = ({
       {
         id: 3,
         title: 'Tech Summit 2025 Opens in Bangalore',
-        content: 'Annual technology summit begins with participation from global tech leaders and startups.',
+        content: 'Annual technology summit begins with participation from global tech leaders and startups. Over 200 companies are showcasing innovations in AI, quantum computing, and sustainable technology. The three-day event features keynote sessions from industry giants including Google, Microsoft, and Amazon. Special focus on AI-powered healthcare solutions and green energy technologies. More than 10,000 delegates from 40 countries are attending.',
         source: 'The Hindu',
         category: 'Event',
         published_date: new Date(now.getTime() - 3 * 60 * 60 * 1000).toISOString(),
@@ -83,7 +83,7 @@ const NewsWidget: React.FC<NewsWidgetProps> = ({
       {
         id: 4,
         title: 'Expressway Accident Causes Traffic Jam',
-        content: 'Multi-vehicle collision on Chennai-Bangalore expressway leads to major traffic disruption.',
+        content: 'Multi-vehicle collision on Chennai-Bangalore expressway leads to major traffic disruption. Dense fog conditions resulted in a chain collision involving 8 vehicles including trucks and passenger cars. Three people have been hospitalized with minor injuries. Traffic was diverted for four hours while rescue operations were underway. Highway authorities are reviewing installation of fog warning systems.',
         source: 'Indian Express',
         category: 'Accident',
         published_date: new Date(now.getTime() - 4 * 60 * 60 * 1000).toISOString(),
@@ -92,7 +92,7 @@ const NewsWidget: React.FC<NewsWidgetProps> = ({
       {
         id: 5,
         title: 'Cyclone Warning for East Coast',
-        content: 'Weather department issues cyclone alert for Odisha and West Bengal coastal areas.',
+        content: 'Weather department issues cyclone alert for Odisha and West Bengal coastal areas. The depression in Bay of Bengal is intensifying and expected to make landfall by Saturday evening. Coastal districts have suspended fishing activities and are preparing evacuation plans for low-lying areas. Wind speeds of 80-90 km/h with heavy rainfall predicted. Navy and Coast Guard have positioned rescue teams.',
         source: 'Indian Express',
         category: 'Weather',
         published_date: new Date(now.getTime() - 5 * 60 * 60 * 1000).toISOString(),
@@ -247,10 +247,7 @@ const NewsWidget: React.FC<NewsWidgetProps> = ({
                 </div>
                 
                 <p className="italic-content news-item-content">
-                  {article.content.length > 120 
-                    ? `${article.content.substring(0, 120)}...` 
-                    : article.content
-                  }
+                  {article.content}
                 </p>
                 
                 <div className="news-item-meta">

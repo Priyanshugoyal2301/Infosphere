@@ -91,9 +91,30 @@
 
   /* Vintage Worn-Out Newspaper Style Components */
   .newspaper-bg {
-    background: transparent !important;
+    /* Use background-color so we don't reset background-image from inline styles */
+    background-color: transparent;
     backdrop-filter: none;
     position: relative;
+  }
+
+  /* Force a page-wide background image layer when needed */
+  .with-page-bg {
+    position: relative;
+    z-index: 0; /* establish stacking context above ::after */
+  }
+
+  .with-page-bg::after {
+    content: '';
+    position: fixed; /* stick to viewport for parallax-like effect */
+    top: 0; left: 0; right: 0; bottom: 0;
+    /* Use a CSS variable to avoid webpack trying to resolve the URL at build time */
+    background-image: var(--page-bg-image, none);
+    background-size: cover;
+    background-position: center;
+    background-repeat: repeat;
+    opacity: 0.5; /* make sure it's visible */
+    pointer-events: none;
+    z-index: 0; /* sits below main content which will be z-index:1 */
   }
   
   .newspaper-bg::before {
@@ -305,26 +326,38 @@
   }
 
   @media (min-width: 768px) {
+    /* Masonry-style two-column layout to reduce large empty gaps */
     .newspaper-columns {
-      grid-template-columns: 1fr 2px 1fr;
-      grid-gap: 0;
+      display: block;               /* switch from grid to multi-column layout */
+      column-count: 2;
       column-gap: 2rem;
       position: relative;
     }
-    
+
+    /* Center divider line to visually separate columns */
     .newspaper-columns::before {
       content: '';
-      grid-column: 2;
-      background: var(--vintage-ink);
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
       width: 2px;
-      height: 100%;
-      justify-self: center;
+      background: var(--vintage-ink);
+      transform: translateX(-1px);
+      pointer-events: none;
     }
-    
+
+    /* Articles behave as blocks inside multi-columns, avoiding splits */
     .newspaper-article {
-      min-height: 320px;
+      display: inline-block;
+      width: 100%;
+      break-inside: avoid;
+      -webkit-column-break-inside: avoid;
+      -moz-column-break-inside: avoid;
+      margin: 0 0 1.25rem 0; /* vertical spacing between items */
+      min-height: auto;      /* allow natural height to eliminate empty space */
     }
-    
+
     /* Compact sections on tablet */
     .newspaper-section.mb-2 .newspaper-columns {
       column-gap: 0.5rem;
@@ -332,6 +365,7 @@
     
     .newspaper-section.mb-2 .newspaper-article {
       min-height: 40px;
+      margin: 0 0 0.5rem 0;
     }
   }
 
@@ -345,8 +379,8 @@
     border-right: none;
     border-top: none;
     position: relative;
-    line-height: 1.6;
-    min-height: 280px;
+    line-height: 1.7;
+    min-height: auto;
     display: flex;
     flex-direction: column;
   }
@@ -386,7 +420,7 @@
   .newspaper-article p {
     font-family: 'Times New Roman', serif;
     font-size: 1.0rem;
-    line-height: 1.5;
+    line-height: 1.65;
     text-align: justify;
     margin-bottom: 1rem;
     color: var(--vintage-ink);
@@ -407,16 +441,7 @@
     box-shadow: none !important;
   }
 
-  /* Grid column alternation for proper 2-column layout */
-  @media (min-width: 768px) {
-    .newspaper-article:nth-child(odd) {
-      grid-column: 1;
-    }
-    
-    .newspaper-article:nth-child(even) {
-      grid-column: 3;
-    }
-  }
+  /* Grid column alternation no longer needed with masonry columns */
 
   /* Optimize section height */
   .newspaper-section {

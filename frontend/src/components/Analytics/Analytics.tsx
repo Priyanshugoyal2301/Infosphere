@@ -376,23 +376,23 @@ const Analytics: React.FC = () => {
 
             {/* AI Predicted News Section */}
             <div className="newspaper-section">
-              <div className="bg-gradient-to-r from-amber-900 via-yellow-900 to-amber-800 text-white p-6 border-b-4 border-black" style={{
-                background: 'linear-gradient(135deg, #B8860B 0%, #8B4513 50%, #556B2F 100%)'
+              <div className="text-black p-6 border-b-4 border-black" style={{
+                background: '#e8dcc8'
               }}>
                 <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                   <div className="flex items-center space-x-4">
                     <div className="text-4xl">🔮</div>
                     <div>
-                      <h2 className="bold-title text-3xl font-black text-white uppercase tracking-wider mb-2">
+                      <h2 className="bold-title text-3xl font-black text-black uppercase tracking-wider mb-2">
                         AI-Powered News Predictions
                       </h2>
-                      <p className="italic-content text-amber-100 text-sm">
+                      <p className="italic-content text-gray-700 text-sm">
                         Machine Learning algorithms predict emerging news trends
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
-                    <div className="text-white/70 text-sm font-bold">Filter by Category:</div>
+                    <div className="text-gray-700 text-sm font-bold">Filter by Category:</div>
                     <select
                       value={selectedSection}
                       onChange={(e) => setSelectedSection(e.target.value)}
@@ -428,20 +428,20 @@ const Analytics: React.FC = () => {
                     );
                     const categoryColor = categoryInfo?.color || '#6B7280';
                     
-                    // Confidence color based on percentage
+                    // Confidence color based on percentage - beige/brown tones
                     const getConfidenceColor = (confidence: number) => {
-                      if (confidence >= 90) return '#10B981'; // Green
-                      if (confidence >= 80) return '#F59E0B'; // Yellow
-                      if (confidence >= 70) return '#EF4444'; // Red
-                      return '#6B7280'; // Gray
+                      if (confidence >= 90) return '#8B7355'; // Dark tan
+                      if (confidence >= 80) return '#A0826D'; // Medium tan
+                      if (confidence >= 70) return '#B8956A'; // Light tan
+                      return '#C4A57B'; // Pale tan
                     };
                     
-                    // Trend color and icon
+                    // Trend color and icon - beige/brown tones
                     const getTrendInfo = (trend: string) => {
                       switch (trend) {
-                        case 'rising': return { color: '#10B981', icon: '📈', text: 'Rising' };
-                        case 'declining': return { color: '#EF4444', icon: '📉', text: 'Declining' };
-                        default: return { color: '#6B7280', icon: '📊', text: 'Stable' };
+                        case 'rising': return { color: '#8B7355', icon: '📈', text: 'Rising' };
+                        case 'declining': return { color: '#C4A57B', icon: '📉', text: 'Declining' };
+                        default: return { color: '#A0826D', icon: '📊', text: 'Stable' };
                       }
                     };
                     
