@@ -213,7 +213,7 @@ const Analytics: React.FC = () => {
                           cx="50%"
                           cy="50%"
                           labelLine={false}
-                          label={({ name, percentage }) => `${name}: ${percentage}%`}
+                          label={({ name, percent }: any) => `${name}: ${(percent * 100).toFixed(1)}%`}
                           outerRadius={80}
                           fill="#B8860B"
                           dataKey="count"
