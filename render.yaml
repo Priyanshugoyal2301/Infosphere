@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: infosphere-backend
+    env: python
+    buildCommand: "pip install fastapi uvicorn[standard] sqlmodel python-multipart httpx pydantic python-dotenv pandas numpy beautifulsoup4 feedparser nltk scikit-learn requests python-jose passlib bcrypt"
+    startCommand: "uvicorn backend.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      - key: DATABASE_URL
+        value: sqlite:///./infosphere.db
+      - key: PYTHONUNBUFFERED
+        value: 1
+    healthCheckPath: /api/v1/news/channels/status

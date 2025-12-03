@@ -5,14 +5,14 @@ FastAPI endpoints to integrate real-time news fetching and classification
 with the existing Infosphere platform.
 
 Features:
-- Get latest classified news
+- Get latest classified news from NewsAPI, GNews, NewsData
 - Real-time news statistics
 - News search and filtering
 - Export functionality
 - Service management
 
 Author: Infosphere Team
-Date: October 2025
+Date: December 2025
 """
 
 import os
@@ -22,6 +22,14 @@ from datetime import datetime, timedelta
 from fastapi import APIRouter, HTTPException, Query, BackgroundTasks
 from pydantic import BaseModel
 import pandas as pd
+
+# Import live news service
+try:
+    from backend.services.live_news_service import live_news_service
+    LIVE_NEWS_ENABLED = True
+except ImportError:
+    LIVE_NEWS_ENABLED = False
+    print("⚠️ Live news service not available, using mock data")
 
 # Mock implementations for now - will be connected to real services later
 class RealTimeNewsFetcher:
@@ -333,6 +341,84 @@ async def debug_info():
         "module_file": __file__,
         "timestamp": datetime.now().isoformat()
     }
+
+@router.get("/live-news")
+async def get_live_news(
+    category: Optional[str] = Query(None, description="Filter by category (politics, sports, technology, business, etc.)"),
+    limit: int = Query(50, description="Maximum number of articles to return")
+):
+    """
+    Get live news from NewsAPI, GNews, and NewsData.io with automatic fallback.
+    
+    This endpoint fetches real-time news from multiple sources with 2-hour caching.
+    """
+    try:
+        if not LIVE_NEWS_ENABLED:
+            raise HTTPException(status_code=503, detail="Live news service not available")
+        
+        # Fetch live news
+        articles = await live_news_service.fetch_live_news(category=category, limit=limit)
+        
+        return {
+            "status": "success",
+            "total": len(articles),
+            "articles": articles,
+            "cache_duration_minutes": 120,
+            "last_updated": datetime.now().isoformat()
+        }
+        
+    except Exception as e:
+        print(f"Error in get_live_news: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to fetch live news: {str(e)}")
+
+
+@router.get("/breaking-news")
+async def get_breaking_news(limit: int = Query(10, description="Number of breaking news articles")):
+    """
+    Get top breaking news articles sorted by recency.
+    """
+    try:
+        if not LIVE_NEWS_ENABLED:
+            raise HTTPException(status_code=503, detail="Live news service not available")
+        
+        breaking_news = await live_news_service.get_breaking_news(limit=limit)
+        
+        return {
+            "status": "success",
+            "breaking_news": breaking_news,
+            "total": len(breaking_news),
+            "last_updated": datetime.now().isoformat()
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch breaking news: {str(e)}")
+
+
+@router.get("/search-live")
+async def search_live_news(
+    query: str = Query(..., description="Search query"),
+    limit: int = Query(20, description="Maximum number of results")
+):
+    """
+    Search live news articles by keyword.
+    """
+    try:
+        if not LIVE_NEWS_ENABLED:
+            raise HTTPException(status_code=503, detail="Live news service not available")
+        
+        results = await live_news_service.search_news(query=query, limit=limit)
+        
+        return {
+            "status": "success",
+            "query": query,
+            "results": results,
+            "total": len(results),
+            "last_updated": datetime.now().isoformat()
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Search failed: {str(e)}")
+
 
 # Backward-compatible alias for statistics - returns dashboard-compatible format
 @router.get("/stats")

@@ -1,0 +1,45 @@
+# Backend Dockerfile for Infosphere
+FROM python:3.10-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements
+COPY requirements.txt .
+
+# Install Python dependencies (excluding heavy ML packages for lighter deployment)
+RUN pip install --no-cache-dir \
+    fastapi>=0.88.0 \
+    uvicorn[standard]>=0.20.0 \
+    sqlmodel>=0.0.8 \
+    python-multipart>=0.0.5 \
+    httpx>=0.23.0 \
+    pydantic>=1.10.0 \
+    python-dotenv>=0.21.0 \
+    pandas>=1.5.0 \
+    numpy>=1.24.0 \
+    beautifulsoup4>=4.11.0 \
+    feedparser>=6.0.10 \
+    nltk>=3.8.0 \
+    scikit-learn>=1.2.0
+
+# Copy backend code
+COPY backend/ ./backend/
+
+# Expose port
+EXPOSE 8000
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV HOST=0.0.0.0
+ENV PORT=8000
+
+# Run the application
+CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]

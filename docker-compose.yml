@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./infosphere.db
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./backend:/app/backend
+    restart: unless-stopped
+    networks:
+      - infosphere-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+    restart: unless-stopped
+    networks:
+      - infosphere-network
+
+networks:
+  infosphere-network:
+    driver: bridge
