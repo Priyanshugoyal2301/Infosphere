@@ -97,6 +97,8 @@ app = FastAPI(
 cors_origins_env = os.getenv("CORS_ORIGINS", "*")
 cors_origins = [o.strip() for o in cors_origins_env.split(",") if o.strip()]
 
+print(f"🌐 CORS Origins configured: {cors_origins}")
+
 # If wildcard is used, credentials must be disabled per CORS spec
 allow_credentials = "*" not in cors_origins
 
@@ -104,15 +106,13 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
     allow_credentials=allow_credentials,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["*"]
 )
 
-# Add trusted host middleware for security
-app.add_middleware(
-    TrustedHostMiddleware, 
-    allowed_hosts=["localhost", "127.0.0.1", "*.localhost"]
-)
+# Remove TrustedHostMiddleware for deployment - it blocks Render/Vercel domains
+# Only use in local development if needed
 
 @app.get("/")
 async def root():
