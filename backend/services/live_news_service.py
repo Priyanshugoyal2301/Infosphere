@@ -18,10 +18,19 @@ class LiveNewsService:
     """Fetch live news from multiple sources with caching and fallback"""
     
     def __init__(self):
+        # Reload environment variables with explicit path
+        import pathlib
+        env_path = pathlib.Path(__file__).parent.parent.parent / '.env'
+        load_dotenv(dotenv_path=env_path, override=True)
+        
         # API Keys
         self.newsapi_key = os.getenv("NEWSAPI_KEY")
         self.gnews_key = os.getenv("GNEWS_API_KEY")
         self.newsdata_key = os.getenv("NEWSDATA_API_KEY")
+        
+        print(f"[INIT] .env path: {env_path}")
+        print(f"[INIT] .env exists: {env_path.exists()}")
+        print(f"[INIT] Loaded API Keys: NewsAPI={bool(self.newsapi_key)}, GNews={bool(self.gnews_key)}, NewsData={bool(self.newsdata_key)}")
         
         # Cache settings
         self.cache_file = "news_cache.json"
@@ -39,11 +48,16 @@ class LiveNewsService:
         Priority: NewsAPI -> GNews -> NewsData -> Cache
         """
         
+        print(f"\n[DEBUG] fetch_live_news called with category={category}, limit={limit}")
+        print(f"[DEBUG] API Keys present: NewsAPI={bool(self.newsapi_key)}, GNews={bool(self.gnews_key)}, NewsData={bool(self.newsdata_key)}")
+        
         # Check cache first
         cached_news = self._get_cached_news(category)
         if cached_news:
             print(f"📦 Returning cached news (age: {self._cache_age(category)} minutes)")
             return cached_news[:limit]
+        
+        print(f"[DEBUG] No valid cache found, trying APIs...")
         
         # Try fetching from APIs in order
         news_articles = None
@@ -57,6 +71,8 @@ class LiveNewsService:
                     print(f"✅ NewsAPI: Fetched {len(news_articles)} articles")
             except Exception as e:
                 print(f"⚠️ NewsAPI failed: {str(e)}")
+                import traceback
+                traceback.print_exc()
         
         # Fallback to GNews
         if not news_articles and self.gnews_key:
@@ -67,6 +83,8 @@ class LiveNewsService:
                     print(f"✅ GNews: Fetched {len(news_articles)} articles")
             except Exception as e:
                 print(f"⚠️ GNews failed: {str(e)}")
+                import traceback
+                traceback.print_exc()
         
         # Fallback to NewsData
         if not news_articles and self.newsdata_key:
@@ -77,6 +95,8 @@ class LiveNewsService:
                     print(f"✅ NewsData: Fetched {len(news_articles)} articles")
             except Exception as e:
                 print(f"⚠️ NewsData failed: {str(e)}")
+                import traceback
+                traceback.print_exc()
         
         # If all APIs fail, return stale cache
         if not news_articles:
@@ -113,7 +133,14 @@ class LiveNewsService:
             
             if response.status_code == 200:
                 data = response.json()
-                return self._process_newsapi_articles(data.get("articles", []))
+                articles = data.get("articles", [])
+                
+                # NewsAPI free tier might return 0 results, skip to next source
+                if not articles or len(articles) == 0:
+                    print("⚠️ NewsAPI returned 0 articles (free tier limitation)")
+                    return []
+                    
+                return self._process_newsapi_articles(articles)
             elif response.status_code == 429:
                 print("⚠️ NewsAPI rate limit exceeded")
                 return []

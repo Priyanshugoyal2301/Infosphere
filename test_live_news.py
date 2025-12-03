@@ -7,6 +7,12 @@ import asyncio
 import sys
 import os
 
+# Fix encoding for Windows
+if sys.platform == 'win32':
+    import codecs
+    sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
+    sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'strict')
+
 # Add parent directory to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -17,7 +23,7 @@ async def test_live_news():
     """Test live news fetching from all APIs"""
     
     print("=" * 80)
-    print("🧪 TESTING LIVE NEWS SERVICE")
+    print("TESTING LIVE NEWS SERVICE")
     print("=" * 80)
     
     # Test 1: Fetch all news
