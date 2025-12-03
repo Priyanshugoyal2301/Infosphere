@@ -249,7 +249,7 @@ const RealTimeNews: React.FC = () => {
   const fetchNews = useCallback(async (category: string = 'all', search: string = '') => {
     try {
       setLoading(true);
-      let url = `${API_BASE_URL}/live-news?limit=50`;
+      let url = `${API_BASE_URL}/live-news?limit=100`;
       
       if (category !== 'all') {
         url += `&category=${encodeURIComponent(category)}`;
@@ -257,7 +257,7 @@ const RealTimeNews: React.FC = () => {
       
       if (search) {
         // Use search endpoint for text queries
-        url = `${API_BASE_URL}/search-live?query=${encodeURIComponent(search)}&limit=20`;
+        url = `${API_BASE_URL}/search-live?query=${encodeURIComponent(search)}&limit=50`;
       }
 
       console.log('🔍 Fetching live news from:', url);

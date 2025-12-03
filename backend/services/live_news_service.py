@@ -181,7 +181,8 @@ class LiveNewsService:
         params = {
             "apikey": self.newsdata_key,
             "country": "in",
-            "language": "en"
+            "language": "en",
+            "size": min(limit, 10)  # NewsData allows max 10 on free tier
         }
         
         if category and category != "all":

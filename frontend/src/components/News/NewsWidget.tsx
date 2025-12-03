@@ -104,7 +104,7 @@ const NewsWidget: React.FC<NewsWidgetProps> = ({
   const fetchLatestNews = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/live-news?limit=${limit * 2}`);
+      const response = await fetch(`${API_BASE_URL}/live-news?limit=${limit * 5}`);
       if (!response.ok) throw new Error('Backend not available');
       
       const data = await response.json();
