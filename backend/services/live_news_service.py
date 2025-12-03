@@ -217,8 +217,8 @@ class LiveNewsService:
                 "image_url": article.get("urlToImage"),
                 "category": self._auto_categorize(article["title"], article.get("description", "")),
                 "sentiment": "neutral",
-                "confidence": 0.0,
-                "api_source": "NewsAPI"
+                "confidence": 0.85,
+                "api_source": "NewsData"
             })
         
         return processed
@@ -240,7 +240,7 @@ class LiveNewsService:
                 "image_url": article.get("image"),
                 "category": self._auto_categorize(article["title"], article.get("description", "")),
                 "sentiment": "neutral",
-                "confidence": 0.0,
+                "confidence": 0.85,
                 "api_source": "GNews"
             })
         
