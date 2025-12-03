@@ -25,11 +25,13 @@ import pandas as pd
 
 # Import live news service
 try:
-    from backend.services.live_news_service import live_news_service
+    from services.live_news_service import live_news_service
     LIVE_NEWS_ENABLED = True
-except ImportError:
+    print("✅ Live news service imported successfully")
+except ImportError as e:
+    print(f"⚠️ Live news service not available: {e}")
     LIVE_NEWS_ENABLED = False
-    print("⚠️ Live news service not available, using mock data")
+    live_news_service = None
 
 # Mock implementations for now - will be connected to real services later
 class RealTimeNewsFetcher:
