@@ -140,7 +140,7 @@ const RealTimeNews: React.FC = () => {
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
   const [showAnalytics, setShowAnalytics] = useState(false);
 
-  const API_BASE_URL = 'http://localhost:8000/api/v1/news';
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000' + '/api/v1/news';
 
   // Mock data for when backend is not available
   const getMockData = () => {
@@ -249,7 +249,7 @@ const RealTimeNews: React.FC = () => {
   const fetchNews = useCallback(async (category: string = 'all', search: string = '') => {
     try {
       setLoading(true);
-      let url = `${API_BASE_URL}/latest?limit=20`;
+      let url = `${API_BASE_URL}/live-news?limit=50`;
       
       if (category !== 'all') {
         url += `&category=${encodeURIComponent(category)}`;
@@ -257,26 +257,26 @@ const RealTimeNews: React.FC = () => {
       
       if (search) {
         // Use search endpoint for text queries
-        url = `${API_BASE_URL}/search?query=${encodeURIComponent(search)}&limit=20`;
+        url = `${API_BASE_URL}/search-live?query=${encodeURIComponent(search)}&limit=20`;
       }
 
-      console.log('🔍 Fetching news from:', url);
+      console.log('🔍 Fetching live news from:', url);
       const response = await fetch(url);
       
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       
-      const data = search ? await response.json() : await response.json();
-      const articles = search ? (data.articles || []) : data;
+      const data = await response.json();
+      const articles = search ? (data.results || data.articles || []) : (data.articles || []);
       
       setArticles(articles);
       setError(null);
-      setServiceStatus('🟢 LIVE FEEDS ACTIVE');
-      console.log(`✅ Successfully loaded ${articles.length} articles from live RSS feeds`);
+      setServiceStatus('🟢 LIVE NEWS API ACTIVE');
+      console.log(`✅ Successfully loaded ${articles.length} articles from live news APIs`);
       
     } catch (err) {
-      console.warn('⚠️ Backend not available, using mock data:', err);
+      console.warn('⚠️ Live news API not available, using mock data:', err);
       // Use mock data when backend is not available
       const mockData = getMockData();
       
@@ -297,9 +297,9 @@ const RealTimeNews: React.FC = () => {
       }
       
       setArticles(filteredData);
-      setStatusMessage('📡 Live RSS feeds active - showing latest cached articles');
-      setIsSuccessStatus(true);
-      setServiceStatus('🟢 LIVE FEEDS ACTIVE');
+      setStatusMessage('📡 Using cached news - live API temporarily unavailable');
+      setIsSuccessStatus(false);
+      setServiceStatus('🟡 USING CACHED DATA');
       
       // Clear status message after 5 seconds
       setTimeout(() => {

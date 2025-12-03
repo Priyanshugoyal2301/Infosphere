@@ -35,7 +35,8 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchNewsStats = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/v1/news/stats');
+        const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+        const response = await fetch(`${API_BASE_URL}/api/v1/news/stats`);
         if (response.ok) {
           const data = await response.json();
           setNewsStats(data);
@@ -76,7 +77,8 @@ const Dashboard: React.FC = () => {
       // Try to fetch from backend with enhanced error handling
       let data;
       try {
-        const response = await fetch('http://localhost:8000/api/v1/news/fetch', {
+        const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+        const response = await fetch(`${API_BASE_URL}/api/v1/news/fetch`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -119,7 +121,8 @@ Sources: ${sources.slice(0, 3).join(', ')}${sources.length > 3 ? '...' : ''}`);
       
       // Try to refresh news stats after fetch
       try {
-        const statsResponse = await fetch('http://localhost:8000/api/v1/news/stats');
+        const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+        const statsResponse = await fetch(`${API_BASE_URL}/api/v1/news/stats`);
         if (statsResponse.ok) {
           const statsData = await statsResponse.json();
           setNewsStats(statsData);
@@ -151,7 +154,8 @@ Sources: Times of India RSS, NDTV Live Feed, Indian Express API...`);
     
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/v1/news/clear', {
+      const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${API_BASE_URL}/api/v1/news/clear`, {
         method: 'DELETE'
       });
       if (response.ok) {
