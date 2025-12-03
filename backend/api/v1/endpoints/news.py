@@ -338,10 +338,19 @@ class FetchResult(BaseModel):
 # Debug and compatibility routes
 @router.get("/debug")
 async def debug_info():
+    """Debug endpoint to check live news service status"""
+    import os
     return {
         "has_get_latest_news": hasattr(news_fetcher, "get_latest_news"),
         "module_file": __file__,
-        "timestamp": datetime.now().isoformat()
+        "timestamp": datetime.now().isoformat(),
+        "LIVE_NEWS_ENABLED": LIVE_NEWS_ENABLED,
+        "live_news_service_type": str(type(live_news_service)) if live_news_service else None,
+        "env_vars": {
+            "NEWSAPI_KEY": "set" if os.getenv("NEWSAPI_KEY") else "missing",
+            "GNEWS_API_KEY": "set" if os.getenv("GNEWS_API_KEY") else "missing",
+            "NEWSDATA_API_KEY": "set" if os.getenv("NEWSDATA_API_KEY") else "missing",
+        }
     }
 
 @router.get("/live-news")
@@ -356,11 +365,18 @@ async def get_live_news(
     """
     try:
         if not LIVE_NEWS_ENABLED:
-            raise HTTPException(status_code=503, detail="Live news service not available")
+            print("❌ Live news service not enabled")
+            raise HTTPException(status_code=503, detail="Live news service not available - check server logs")
         
+        if live_news_service is None:
+            print("❌ live_news_service is None")
+            raise HTTPException(status_code=503, detail="Live news service not initialized")
+        
+        print(f"✅ Fetching live news: category={category}, limit={limit}")
         # Fetch live news
         articles = await live_news_service.fetch_live_news(category=category, limit=limit)
         
+        print(f"✅ Fetched {len(articles)} articles")
         return {
             "status": "success",
             "total": len(articles),
@@ -369,8 +385,12 @@ async def get_live_news(
             "last_updated": datetime.now().isoformat()
         }
         
+    except HTTPException:
+        raise
     except Exception as e:
-        print(f"Error in get_live_news: {str(e)}")
+        import traceback
+        error_detail = f"{str(e)}\n{traceback.format_exc()}"
+        print(f"❌ Error in get_live_news: {error_detail}")
         raise HTTPException(status_code=500, detail=f"Failed to fetch live news: {str(e)}")
 
 
