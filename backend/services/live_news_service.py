@@ -41,7 +41,7 @@ class LiveNewsService:
         print(f"[INIT] Loaded API Keys: NewsAPI={bool(self.newsapi_key)}, GNews={bool(self.gnews_key)}, NewsData={bool(self.newsdata_key)}")
         
         # Cache settings
-        self.cache_file = "news_cache.json"
+        self.cache_file = "news_cache_v2.json"  # Changed to v2 to force fresh fetch with new confidence values
         cache_duration_minutes = int(os.getenv("NEWS_CACHE_DURATION", 120))
         self.cache_duration = timedelta(minutes=cache_duration_minutes)
         
