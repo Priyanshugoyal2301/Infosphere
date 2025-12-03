@@ -177,32 +177,95 @@ Sources: Times of India RSS, NDTV Live Feed, Indian Express API...`);
     }
   };
 
-  const breakingNews = [
-    {
-      id: 1,
-      title: "Rs 2cr dues, moral demands: What triggered Rohit Aarrya's hostage act in Mumbai - timeline of events",
-      category: "Breaking",
-      status: "Developing",
-      urgency: "critical",
-      createdAt: "2 hours ago"
-    },
-    {
-      id: 2,
-      title: "One crore govt jobs & more: NDA releases manifesto for Bihar polls; key promises",
-      category: "Politics",
-      status: "Active",
-      urgency: "high",
-      createdAt: "4 hours ago"
-    },
-    {
-      id: 3,
-      title: "India lost 1,171 soldiers in this war. Why has the country chosen to forget it?",
-      category: "National",
-      status: "Investigation",
-      urgency: "high",
-      createdAt: "6 hours ago"
-    }
-  ];
+  const [breakingNews, setBreakingNews] = useState<any[]>([]);
+
+  // Fetch breaking news
+  useEffect(() => {
+    const fetchBreakingNews = async () => {
+      try {
+        const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+        const response = await fetch(`${API_BASE_URL}/api/v1/news/breaking-news?limit=3`);
+        if (response.ok) {
+          const data = await response.json();
+          const articles = data.breaking_news || [];
+          // Map to expected format
+          const mapped = articles.map((article: any, index: number) => ({
+            id: index + 1,
+            title: article.title,
+            category: "Breaking",
+            status: "Developing",
+            urgency: "critical",
+            createdAt: new Date(article.published_at).toLocaleTimeString('en-US', { 
+              hour: '2-digit', 
+              minute: '2-digit'
+            })
+          }));
+          setBreakingNews(mapped);
+        } else {
+          // Use mock data if API fails
+          setBreakingNews([
+            {
+              id: 1,
+              title: "Major development in national affairs - Details emerging",
+              category: "Breaking",
+              status: "Developing",
+              urgency: "critical",
+              createdAt: "2 hours ago"
+            },
+            {
+              id: 2,
+              title: "Important policy announcement expected today",
+              category: "Politics",
+              status: "Active",
+              urgency: "high",
+              createdAt: "4 hours ago"
+            },
+            {
+              id: 3,
+              title: "Significant event under investigation",
+              category: "National",
+              status: "Investigation",
+              urgency: "high",
+              createdAt: "6 hours ago"
+            }
+          ]);
+        }
+      } catch (error) {
+        console.log('Failed to fetch breaking news, using mock data');
+        setBreakingNews([
+          {
+            id: 1,
+            title: "Major development in national affairs - Details emerging",
+            category: "Breaking",
+            status: "Developing",
+            urgency: "critical",
+            createdAt: "2 hours ago"
+          },
+          {
+            id: 2,
+            title: "Important policy announcement expected today",
+            category: "Politics",
+            status: "Active",
+            urgency: "high",
+            createdAt: "4 hours ago"
+          },
+          {
+            id: 3,
+            title: "Significant event under investigation",
+            category: "National",
+            status: "Investigation",
+            urgency: "high",
+            createdAt: "6 hours ago"
+          }
+        ]);
+      }
+    };
+
+    fetchBreakingNews();
+    // Refresh every 5 minutes
+    const interval = setInterval(fetchBreakingNews, 300000);
+    return () => clearInterval(interval);
+  }, []);
 
 
 
