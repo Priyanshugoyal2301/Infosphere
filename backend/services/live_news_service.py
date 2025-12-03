@@ -18,12 +18,20 @@ class LiveNewsService:
     """Fetch live news from multiple sources with caching and fallback"""
     
     def __init__(self):
-        # Reload environment variables with explicit path
-        import pathlib
-        env_path = pathlib.Path(__file__).parent.parent.parent / '.env'
-        load_dotenv(dotenv_path=env_path, override=True)
+        # Try to load .env file (for local development)
+        # In production (Render), environment variables come from platform settings
+        try:
+            import pathlib
+            env_path = pathlib.Path(__file__).parent.parent.parent / '.env'
+            if env_path.exists():
+                load_dotenv(dotenv_path=env_path, override=True)
+                print(f"[INIT] Loaded .env from: {env_path}")
+            else:
+                print(f"[INIT] No .env file at {env_path}, using system environment variables")
+        except Exception as e:
+            print(f"[INIT] Could not load .env: {e}, using system environment variables")
         
-        # API Keys
+        # API Keys - will work from .env (local) or Render environment variables
         self.newsapi_key = os.getenv("NEWSAPI_KEY")
         self.gnews_key = os.getenv("GNEWS_API_KEY")
         self.newsdata_key = os.getenv("NEWSDATA_API_KEY")
