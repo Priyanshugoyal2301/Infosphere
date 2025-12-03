@@ -140,7 +140,7 @@ const RealTimeNews: React.FC = () => {
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
   const [showAnalytics, setShowAnalytics] = useState(false);
 
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000' + '/api/v1/news';
+  const API_BASE_URL = (process.env.REACT_APP_API_URL || 'http://localhost:8000') + '/api/v1/news';
 
   // Mock data for when backend is not available
   const getMockData = () => {

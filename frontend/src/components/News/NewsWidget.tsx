@@ -27,7 +27,7 @@ const NewsWidget: React.FC<NewsWidgetProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000' + '/api/v1/news';
+  const API_BASE_URL = (process.env.REACT_APP_API_URL || 'http://localhost:8000') + '/api/v1/news';
 
   const seeded01 = (seed: string) => {
     let h = 0;
