@@ -104,12 +104,14 @@ const NewsWidget: React.FC<NewsWidgetProps> = ({
   const fetchLatestNews = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/latest?limit=${limit * 2}`);
+      const response = await fetch(`${API_BASE_URL}/live-news?limit=${limit * 2}`);
       if (!response.ok) throw new Error('Backend not available');
       
       const data = await response.json();
+      // Handle the response format from live-news API
+      const articles = data.articles || data || [];
       // Filter to only verified items (>= 75%) and limit results
-      const filtered = (data as NewsArticle[]).filter(a => getConfidence(a) >= 0.75);
+      const filtered = (articles as NewsArticle[]).filter(a => getConfidence(a) >= 0.75);
       setArticles(filtered.slice(0, limit));
       setError(null);
     } catch (err) {
