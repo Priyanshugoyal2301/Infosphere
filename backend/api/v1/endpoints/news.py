@@ -25,13 +25,33 @@ import pandas as pd
 
 # Import live news service
 try:
+    # Try relative import first (for deployed environment)
     from services.live_news_service import live_news_service
     LIVE_NEWS_ENABLED = True
-    print("✅ Live news service imported successfully")
-except ImportError as e:
-    print(f"⚠️ Live news service not available: {e}")
-    LIVE_NEWS_ENABLED = False
-    live_news_service = None
+    print("✅ Live news service imported successfully (relative)")
+except ImportError as e1:
+    print(f"⚠️ Relative import failed: {e1}")
+    try:
+        # Try absolute import (backup)
+        from backend.services.live_news_service import live_news_service
+        LIVE_NEWS_ENABLED = True
+        print("✅ Live news service imported successfully (absolute)")
+    except ImportError as e2:
+        print(f"⚠️ Absolute import failed: {e2}")
+        try:
+            # Try direct instantiation
+            import sys
+            import os
+            backend_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+            sys.path.insert(0, backend_path)
+            from services.live_news_service import LiveNewsService
+            live_news_service = LiveNewsService()
+            LIVE_NEWS_ENABLED = True
+            print("✅ Live news service imported successfully (direct)")
+        except Exception as e3:
+            print(f"❌ All import methods failed: {e3}")
+            LIVE_NEWS_ENABLED = False
+            live_news_service = None
 
 # Mock implementations for now - will be connected to real services later
 class RealTimeNewsFetcher:
