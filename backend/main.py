@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Header
+from fastapi import FastAPI, HTTPException, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from contextlib import asynccontextmanager
@@ -7,6 +7,9 @@ import sys
 import os
 import json
 from dotenv import load_dotenv
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 # Add the backend directory to Python path for imports
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -48,6 +51,7 @@ try:
     from api.v1.endpoints.issues import router as issues_router
     from api.v1.endpoints.media import router as media_router
     from api.v1.endpoints.policy import router as policy_router
+    from api.v1.endpoints.reports import router as reports_router
     core_routers_available = True
 except ImportError as e:
     print(f"Warning: Core routers not available: {e}")
@@ -57,31 +61,34 @@ except ImportError as e:
 async def lifespan(app: FastAPI):
     """Application lifespan events"""
     # Startup
-    print("🚀 Starting Infosphere API...")
+    print("Starting Infosphere API...")
     
     # Initialize database
     try:
         init_db()
-        print("✅ Database initialized successfully")
+        print("Database initialized successfully")
     except Exception as e:
-        print(f"❌ Database initialization failed: {e}")
+        print(f"Database initialization failed: {e}")
     
     # Initialize ML models (placeholder for now)
-    print("🤖 ML models ready (using mock implementations)")
+    print("ML models ready (using mock implementations)")
     
     # Initialize ATIE service
     if atie_available:
         try:
-            print("🔍 Initializing ATIE (AI Trust and Integrity Engine)...")
+            print("Initializing ATIE (AI Trust and Integrity Engine)...")
             # ATIE service initializes automatically when imported
-            print("✅ ATIE service ready for textual integrity analysis")
+            print("ATIE service ready for textual integrity analysis")
         except Exception as e:
-            print(f"⚠️ ATIE initialization warning: {e}")
+            print(f"ATIE initialization warning: {e}")
     
     yield
     
     # Shutdown
-    print("🔄 Shutting down Infosphere API...")
+    print("Shutting down Infosphere API...")
+
+# Initialize rate limiter
+limiter = Limiter(key_func=get_remote_address)
 
 # Create FastAPI application
 app = FastAPI(
@@ -93,11 +100,15 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
+# Add rate limiter state and exception handler
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 # Configure CORS
 cors_origins_env = os.getenv("CORS_ORIGINS", "*")
 cors_origins = [o.strip() for o in cors_origins_env.split(",") if o.strip()]
 
-print(f"🌐 CORS Origins configured: {cors_origins}")
+print(f"CORS Origins configured: {cors_origins}")
 
 # If wildcard is used, credentials must be disabled per CORS spec
 allow_credentials = "*" not in cors_origins
@@ -336,11 +347,11 @@ async def update_profile(profile_data: dict, authorization: str = Header(None)):
 # Include API routers
 if atie_available:
     app.include_router(atie_router, prefix="/api/v1")
-    print("📡 ATIE API endpoints registered at /api/v1/atie/*")
+    print("ATIE API endpoints registered at /api/v1/atie/*")
 
 if news_available:
     app.include_router(news_router, prefix="/api/v1")
-    print("📰 News API endpoints registered at /api/v1/news/*")
+    print("News API endpoints registered at /api/v1/news/*")
 
 if auth_available:
     app.include_router(auth_router, prefix="/api/v1")
@@ -349,8 +360,9 @@ if auth_available:
 if core_routers_available:
     app.include_router(issues_router, prefix="/api/v1")
     app.include_router(media_router, prefix="/api/v1")
-    app.include_router(policy_router, prefix="/api/v1")
-    print("✅ Core API endpoints registered at /api/v1/(issues|media|policy)/*")
+    app.include_router(policy_router, prefix="/api/v1/policy")
+    app.include_router(reports_router, prefix="/api/v1")
+    print("Core API endpoints registered at /api/v1/(issues|media|policy|admin)/*")
 
 # Remove old mock endpoints; real routers are now mounted.
 # News endpoints are now provided by the news_router

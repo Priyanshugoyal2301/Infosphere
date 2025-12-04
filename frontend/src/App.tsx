@@ -3,7 +3,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import Navbar from './components/Layout/Navbar';
 import Footer from './components/Layout/Footer';
+import LandingPage from './components/Landing/LandingPage';
 import Dashboard from './components/Dashboard/Dashboard';
+import ViewReports from './components/Admin/ViewReports';
 import ReportIssue from './components/Issues/ReportIssue';
 import Analytics from './components/Analytics/Analytics';
 import MySubmissions from './components/Issues/MySubmissions';
@@ -20,7 +22,9 @@ function App() {
           <Navbar />
           <main className="container mx-auto px-4 py-8">
             <Routes>
-              <Route path="/" element={<Dashboard />} />
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/admin/reports" element={<ViewReports />} />
               <Route path="/report" element={<ReportIssue />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/verify" element={<EnhancedMediaVerification />} />

@@ -1,0 +1,54 @@
+[
+  {
+    "id": "rpt_001",
+    "title": "Pothole on Main Street causing traffic issues",
+    "description": "Large pothole near the intersection of Main Street and 5th Avenue has been causing traffic congestion and vehicle damage for the past week.",
+    "category": "Infrastructure",
+    "location": "Main Street & 5th Avenue, Downtown",
+    "status": "pending",
+    "submitted_by": "citizen_user",
+    "submitted_at": "2025-12-03T10:30:00Z"
+  },
+  {
+    "id": "rpt_002",
+    "title": "Street lights not working in residential area",
+    "description": "Multiple street lights in the Greenwood residential area have been non-functional for over two weeks, creating safety concerns.",
+    "category": "Public Safety",
+    "location": "Greenwood Residential Area",
+    "status": "approved",
+    "submitted_by": "local_resident",
+    "submitted_at": "2025-11-28T14:15:00Z",
+    "reviewed_at": "2025-11-29T09:00:00Z"
+  },
+  {
+    "id": "rpt_003",
+    "title": "Illegal dumping near community park",
+    "description": "Construction debris and household waste have been illegally dumped near the entrance of Community Park.",
+    "category": "Environment",
+    "location": "Community Park Entrance",
+    "status": "pending",
+    "submitted_by": "park_volunteer",
+    "submitted_at": "2025-12-02T16:45:00Z"
+  },
+  {
+    "id": "rpt_004",
+    "title": "Water main leak on Elm Street",
+    "description": "Significant water leak from main pipe causing flooding on Elm Street sidewalk.",
+    "category": "Infrastructure",
+    "location": "Elm Street, Block 200",
+    "status": "rejected",
+    "submitted_by": "homeowner123",
+    "submitted_at": "2025-11-25T08:20:00Z",
+    "reviewed_at": "2025-11-26T11:30:00Z"
+  },
+  {
+    "id": "rpt_005",
+    "title": "Graffiti vandalism on public building",
+    "description": "Extensive graffiti on the exterior walls of the Public Library requires immediate cleanup.",
+    "category": "Public Property",
+    "location": "Central Public Library",
+    "status": "pending",
+    "submitted_by": "librarian_staff",
+    "submitted_at": "2025-12-04T07:00:00Z"
+  }
+]

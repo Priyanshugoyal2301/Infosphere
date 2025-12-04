@@ -6,23 +6,40 @@ import ProfileModal from '../Auth/ProfileModal';
 
 const Navbar: React.FC = () => {
   const location = useLocation();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, userRole, isAuthenticated, logout } = useAuth();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
 
-  const navLinks = [
-    { path: '/', label: 'NEWSROOM', icon: '🏠' },
+  // Role-based navigation links
+  const baseLinks = [
+    { path: '/dashboard', label: 'NEWSROOM', icon: '🏠' },
     { path: '/news', label: 'LIVE NEWS', icon: '📡' },
-    { path: '/report', label: 'SUBMIT STORY', icon: '📝' },
+  ];
+
+  const roleSpecificLinks = userRole === 'admin' 
+    ? [{ path: '/admin/reports', label: 'VIEW REPORTS', icon: '📋' }]
+    : [{ path: '/report', label: 'SUBMIT STORY', icon: '📝' }];
+
+  const commonLinks = [
     { path: '/analytics', label: 'ANALYTICS', icon: '📊' },
-    { path: '/verify', label: 'FACT CHECK', icon: '🔍' },
+    { path: '/verify', label: userRole === 'admin' ? 'FACTS REPORTED' : 'FACT CHECK', icon: '🔍' },
     { path: '/policy', label: 'POLICY DESK', icon: '📋' },
   ];
 
+  // Show all links when on dashboard, show basic links on landing page
+  const navLinks = location.pathname === '/' 
+    ? []
+    : [...baseLinks, ...roleSpecificLinks, ...commonLinks];
+
   const isActive = (path: string) => {
-    if (path === '/') return location.pathname === '/';
+    if (path === '/dashboard') return location.pathname === '/dashboard';
     return location.pathname.startsWith(path);
   };
+
+  // Don't show navbar on landing page
+  if (location.pathname === '/') {
+    return null;
+  }
 
   return (
     <nav className="border-t-4 border-b-4 border-black newspaper-bg relative z-30 mt-8" style={{background: '#e8dcc8'}}>
@@ -81,6 +98,11 @@ const Navbar: React.FC = () => {
           <div className="hidden md:flex items-center space-x-3">
             {isAuthenticated && user ? (
               <>
+                {userRole && (
+                  <span className="text-xs font-black text-white bg-black px-3 py-1 border-2 border-black uppercase">
+                    {userRole === 'admin' ? '👨‍💼 ADMIN' : '📰 READER'}
+                  </span>
+                )}
                 <button
                   onClick={() => setShowProfileModal(true)}
                   className="flex items-center space-x-2 text-xs font-bold text-black uppercase hover:bg-gray-100 px-2 py-1 border-2 border-black transition-colors"

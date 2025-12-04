@@ -145,25 +145,38 @@ const PolicyDashboard: React.FC = () => {
     if (!selectedFile) return;
 
     setIsAnalyzing(true);
+    setPolicyAnalysis(null);
     
     try {
       const formData = new FormData();
       formData.append('file', selectedFile);
 
-      const response = await fetch('http://localhost:8001/api/v1/policy/upload-pdf', {
+      const response = await fetch('http://localhost:8000/api/v1/policy/summarize', {
         method: 'POST',
         body: formData,
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        setPolicyAnalysis(result);
-      } else {
-        alert('Failed to analyze PDF. Please try again.');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to analyze PDF');
       }
-    } catch (error) {
+
+      const result = await response.json();
+      
+      // Transform API response to match PolicyAnalysis interface
+      setPolicyAnalysis({
+        title: result.filename || 'Policy Document',
+        summary: result.summary || 'No summary available',
+        key_points: result.key_points || [],
+        structure: `${result.metadata?.total_pages || 0} pages, ${result.metadata?.word_count || 0} words`,
+        sentiment: {
+          label: 'Neutral',
+          score: 0.5
+        }
+      });
+    } catch (error: any) {
       console.error('Error analyzing PDF:', error);
-      alert('An error occurred while analyzing the PDF.');
+      alert(error.message || 'An error occurred while analyzing the PDF. Please try again.');
     } finally {
       setIsAnalyzing(false);
     }

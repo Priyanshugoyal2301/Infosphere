@@ -1,7 +1,9 @@
-from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form
+from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form, Request
 from sqlmodel import Session
 from typing import List, Optional, Dict, Any
 import logging
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from database.database import get_session
 from database.models import Policy, PolicyCreate, PolicyResponse, SentimentScore
@@ -10,6 +12,9 @@ from services.pdf_policy_service import pdf_policy_analyzer
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
+# Initialize rate limiter
+limiter = Limiter(key_func=get_remote_address)
 
 @router.post("/", response_model=PolicyResponse)
 async def create_policy(
@@ -389,3 +394,100 @@ async def analyze_policy_text(
     except Exception as e:
         logger.error(f"❌ Policy text analysis failed: {e}")
         raise HTTPException(status_code=500, detail=f"Policy analysis failed: {str(e)}")
+
+@router.post("/summarize", response_model=Dict[str, Any])
+@limiter.limit("5/minute")
+async def summarize_pdf(
+    request: Request,
+    file: UploadFile = File(..., description="PDF policy document to summarize"),
+) -> Dict[str, Any]:
+    """
+    Quick PDF summarization endpoint with AI-powered BART model.
+    
+    Optimized for fast summarization of policy documents with:
+    - Automatic chunking for long documents
+    - Hierarchical summarization 
+    - Key points extraction
+    - Rate limiting (5 requests/minute)
+    
+    Returns:
+        - summary: AI-generated summary text
+        - key_points: List of key sentences
+        - metadata: Document info (pages, word count, etc.)
+        - filename: Original filename
+    """
+    try:
+        # Validate file type
+        if not file.filename.lower().endswith('.pdf'):
+            raise HTTPException(
+                status_code=400, 
+                detail="Only PDF files are allowed. Please upload a .pdf file."
+            )
+        
+        # Check file size (limit to 10MB)
+        max_file_size = 10 * 1024 * 1024  # 10MB
+        contents = await file.read()
+        file_size_mb = len(contents) / (1024 * 1024)
+        
+        if len(contents) > max_file_size:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"File too large ({file_size_mb:.2f}MB). Maximum size is 10MB."
+            )
+        
+        # Reset file pointer for processing
+        await file.seek(0)
+        
+        logger.info(f"📄 Processing PDF summarization: {file.filename} ({file_size_mb:.2f}MB)")
+        
+        # Extract text from PDF (returns tuple: text, metadata)
+        try:
+            full_text, text_metadata = pdf_policy_analyzer.extract_text_from_pdf(file.file)
+        except Exception as e:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Failed to extract text from PDF: {str(e)}"
+            )
+        
+        word_count = text_metadata.get('word_count', len(full_text.split()))
+        total_pages = text_metadata.get('total_pages', 0)
+        
+        logger.info(f"📝 Extracted {word_count} words from {total_pages} pages")
+        
+        # Generate AI summary with chunking for long documents
+        summary_result = pdf_policy_analyzer.generate_summary(full_text)
+        
+        if not summary_result or 'summary' not in summary_result:
+            logger.warning(f"⚠️ AI summarization failed, using extractive fallback")
+            # Fallback to extractive summarization
+            summary_result = pdf_policy_analyzer.extractive_summary(full_text)
+        
+        # Prepare response
+        response = {
+            "success": True,
+            "message": "PDF summarization completed successfully",
+            "filename": file.filename,
+            "summary": summary_result.get('summary', 'No summary available'),
+            "key_points": summary_result.get('key_points', []),
+            "metadata": {
+                "total_pages": total_pages,
+                "word_count": word_count,
+                "file_size_mb": round(file_size_mb, 2),
+                "model_used": summary_result.get('model', 'facebook/bart-large-cnn'),
+                "processing_method": summary_result.get('method', 'transformer'),
+                "confidence": summary_result.get('confidence', 'high'),
+                "extraction_method": text_metadata.get('extraction_method', 'unknown')
+            }
+        }
+        
+        logger.info(f"✅ PDF summarization completed: {file.filename}")
+        return response
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ PDF summarization failed: {e}")
+        raise HTTPException(
+            status_code=500, 
+            detail=f"PDF summarization failed: {str(e)}"
+        )

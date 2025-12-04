@@ -13,6 +13,6 @@ api_router.include_router(policy.router, prefix="/policy", tags=["Policy Analysi
 try:
     from .v1.endpoints import atie
     api_router.include_router(atie.router, prefix="/atie", tags=["AI Trust & Integrity"])
-    print("📡 ATIE endpoints registered successfully")
+    print("ATIE endpoints registered successfully")
 except ImportError as e:
-    print(f"⚠️ ATIE router not available: {e}")
+    print(f"Warning: ATIE router not available: {e}")

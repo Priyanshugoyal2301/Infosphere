@@ -17,8 +17,10 @@ import re
 from typing import Dict, List, Optional, Tuple
 from datetime import datetime
 import logging
-from transformers import pipeline, AutoTokenizer, AutoModelForSeq2SeqLM
+from transformers import pipeline, BartTokenizer, BartForConditionalGeneration
 import torch
+from functools import lru_cache
+import hashlib
 
 logger = logging.getLogger(__name__)
 
@@ -26,9 +28,12 @@ class PDFPolicyAnalyzer:
     """Enhanced policy analysis with PDF processing capabilities"""
     
     def __init__(self):
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.device = -1  # CPU only for deployment
         self.summarizer = None
         self.sentiment_analyzer = None
+        self.tokenizer = None
+        self.model = None
+        self.max_chunk_tokens = 900
         
         # Initialize models
         self.initialize_models()
@@ -46,28 +51,31 @@ class PDFPolicyAnalyzer:
     def initialize_models(self):
         """Initialize AI models for summarization and sentiment analysis"""
         try:
-            logger.info("🔄 Loading summarization model...")
-            # Use BART for summarization (lighter than T5)
+            logger.info("🔄 Loading summarization model (BART-large-CNN)...")
+            
+            # Load model and tokenizer explicitly
+            model_name = "facebook/bart-large-cnn"
+            self.tokenizer = BartTokenizer.from_pretrained(model_name)
+            self.model = BartForConditionalGeneration.from_pretrained(model_name)
+            self.model.eval()  # Inference mode
+            
+            # Create pipeline
             self.summarizer = pipeline(
                 "summarization", 
-                model="facebook/bart-large-cnn",
-                device=0 if self.device.type == 'cuda' else -1
+                model=self.model,
+                tokenizer=self.tokenizer,
+                device=self.device,
+                framework="pt"
             )
             
-            logger.info("🔄 Loading sentiment analyzer...")
-            self.sentiment_analyzer = pipeline(
-                "sentiment-analysis",
-                model="cardiffnlp/twitter-roberta-base-sentiment-latest",
-                device=0 if self.device.type == 'cuda' else -1
-            )
-            
-            logger.info("✅ Policy analysis models loaded successfully")
+            logger.info("✅ Summarization model loaded successfully")
             
         except Exception as e:
             logger.error(f"⚠️ Failed to load models: {e}")
-            # Initialize with None - will use fallback methods
+            logger.info("Will use fallback extractive summarization")
             self.summarizer = None
-            self.sentiment_analyzer = None
+            self.tokenizer = None
+            self.model = None
     
     def extract_text_from_pdf(self, pdf_file) -> Tuple[str, Dict]:
         """Extract text from PDF file with metadata"""
@@ -322,7 +330,7 @@ class PDFPolicyAnalyzer:
         return requirements[:15]  # Limit to 15 requirements
     
     def generate_summary(self, text: str, max_length: int = 300) -> Dict:
-        """Generate policy summary"""
+        """Generate policy summary with chunking for long documents"""
         try:
             # If text is too short, return as-is
             if len(text) < 100:
@@ -333,31 +341,79 @@ class PDFPolicyAnalyzer:
                 }
             
             # If summarizer model is available
-            if self.summarizer:
-                # Split long text into chunks for processing
-                max_input_length = 1024
-                if len(text) > max_input_length:
-                    # Take first and last portions to capture key info
-                    text = text[:max_input_length//2] + "..." + text[-max_input_length//2:]
-                
+            if self.summarizer and self.tokenizer:
                 try:
-                    summary_result = self.summarizer(
-                        text, 
-                        max_length=max_length, 
-                        min_length=50, 
-                        do_sample=False
-                    )
+                    # Calculate word count
+                    word_count = len(text.split())
+                    logger.info(f"Summarizing {word_count} words...")
                     
-                    return {
-                        'summary': summary_result[0]['summary_text'],
-                        'method': 'transformer_model',
-                        'confidence': 0.8
-                    }
+                    # Chunk the text for long documents
+                    chunks = self._chunk_text(text)
+                    logger.info(f"Split into {len(chunks)} chunks")
+                    
+                    # Summarize each chunk
+                    chunk_summaries = []
+                    words_per_chunk = max(50, max_length // len(chunks))
+                    
+                    for i, chunk in enumerate(chunks):
+                        try:
+                            result = self.summarizer(
+                                chunk,
+                                max_length=min(words_per_chunk * 2, 200),
+                                min_length=min(words_per_chunk, 40),
+                                do_sample=False,
+                                truncation=True,
+                                num_beams=4,
+                                length_penalty=2.0,
+                                early_stopping=True
+                            )
+                            chunk_summaries.append(result[0]['summary_text'])
+                            logger.info(f"✓ Chunk {i+1}/{len(chunks)} summarized")
+                        except Exception as e:
+                            logger.warning(f"Chunk {i+1} failed: {e}")
+                            continue
+                    
+                    # Combine chunk summaries
+                    if chunk_summaries:
+                        combined = ' '.join(chunk_summaries)
+                        
+                        # Final summary if multiple chunks
+                        if len(chunks) > 1:
+                            try:
+                                final_result = self.summarizer(
+                                    combined,
+                                    max_length=max_length,
+                                    min_length=min(max_length // 2, 100),
+                                    do_sample=False,
+                                    truncation=True
+                                )
+                                summary_text = final_result[0]['summary_text']
+                            except:
+                                summary_text = combined[:max_length * 5]  # Approximate char limit
+                        else:
+                            summary_text = combined
+                        
+                        # Extract key points
+                        key_points = self._extract_key_sentences(text, num_points=5)
+                        
+                        return {
+                            'summary': summary_text,
+                            'key_points': key_points,
+                            'method': 'transformer_model',
+                            'confidence': 0.85,
+                            'metadata': {
+                                'original_words': word_count,
+                                'summary_words': len(summary_text.split()),
+                                'chunks_processed': len(chunks),
+                                'model': 'facebook/bart-large-cnn'
+                            }
+                        }
                     
                 except Exception as e:
                     logger.warning(f"Transformer summarization failed: {e}")
             
             # Fallback: extractive summarization
+            logger.info("Using extractive summarization fallback")
             return self.extractive_summary(text, max_length)
             
         except Exception as e:
@@ -365,8 +421,68 @@ class PDFPolicyAnalyzer:
             return {
                 'summary': "Unable to generate summary due to processing error.",
                 'method': 'error',
-                'confidence': 0.0
+                'confidence': 0.0,
+                'key_points': []
             }
+    
+    def _chunk_text(self, text: str) -> List[str]:
+        """Split text into chunks that fit model's context window"""
+        if not self.tokenizer:
+            # Fallback: simple chunking by character count
+            chunk_size = 3000
+            return [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
+        
+        # Split on sentences
+        sentences = text.replace('\n', ' ').split('. ')
+        chunks = []
+        current_chunk = []
+        current_tokens = 0
+        
+        for sentence in sentences:
+            sentence = sentence.strip()
+            if not sentence:
+                continue
+            
+            # Tokenize sentence
+            tokens = self.tokenizer.encode(sentence, add_special_tokens=False)
+            sentence_tokens = len(tokens)
+            
+            if current_tokens + sentence_tokens > self.max_chunk_tokens:
+                # Save current chunk
+                if current_chunk:
+                    chunks.append('. '.join(current_chunk) + '.')
+                current_chunk = [sentence]
+                current_tokens = sentence_tokens
+            else:
+                current_chunk.append(sentence)
+                current_tokens += sentence_tokens
+        
+        # Add final chunk
+        if current_chunk:
+            chunks.append('. '.join(current_chunk) + '.')
+        
+        return chunks if chunks else [text]
+    
+    def _extract_key_sentences(self, text: str, num_points: int = 5) -> List[str]:
+        """Extract key sentences using keyword scoring"""
+        sentences = text.split('. ')
+        
+        # Important keywords for policies
+        important_keywords = [
+            'require', 'must', 'shall', 'policy', 'objective',
+            'benefit', 'implement', 'ensure', 'provide', 'establish',
+            'mandate', 'regulation', 'law', 'act', 'section'
+        ]
+        
+        scored_sentences = []
+        for sentence in sentences:
+            score = sum(1 for kw in important_keywords if kw in sentence.lower())
+            if score > 0 and len(sentence.split()) > 5:
+                scored_sentences.append((score, sentence.strip()))
+        
+        # Sort by score and get top N
+        scored_sentences.sort(reverse=True, key=lambda x: x[0])
+        return [s[1] + '.' for s in scored_sentences[:num_points]]
     
     def extractive_summary(self, text: str, max_length: int) -> Dict:
         """Fallback extractive summarization"""
@@ -386,7 +502,7 @@ class PDFPolicyAnalyzer:
                         score += 1
             
             # Prefer sentences with numbers (often contain important facts)
-            if re.search(r'\\d+', sentence):
+            if re.search(r'\d+', sentence):
                 score += 1
             
             scored_sentences.append((score, sentence))
@@ -408,10 +524,18 @@ class PDFPolicyAnalyzer:
         if not summary.endswith('.'):
             summary += '.'
         
+        # Extract key points (top 5 scored sentences)
+        key_points = [sent[1] + '.' for sent in scored_sentences[:5]]
+        
         return {
             'summary': summary,
+            'key_points': key_points,
             'method': 'extractive',
-            'confidence': 0.6
+            'confidence': 0.6,
+            'metadata': {
+                'original_words': len(text.split()),
+                'summary_words': len(summary.split())
+            }
         }
     
     def analyze_sentiment(self, text: str) -> Dict:

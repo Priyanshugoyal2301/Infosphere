@@ -28,16 +28,16 @@ try:
     # Try relative import first (for deployed environment)
     from services.live_news_service import live_news_service
     LIVE_NEWS_ENABLED = True
-    print("✅ Live news service imported successfully (relative)")
+    print("Live news service imported successfully (relative)")
 except ImportError as e1:
-    print(f"⚠️ Relative import failed: {e1}")
+    print(f"Warning: Relative import failed: {e1}")
     try:
         # Try absolute import (backup)
         from backend.services.live_news_service import live_news_service
         LIVE_NEWS_ENABLED = True
-        print("✅ Live news service imported successfully (absolute)")
+        print("Live news service imported successfully (absolute)")
     except ImportError as e2:
-        print(f"⚠️ Absolute import failed: {e2}")
+        print(f"Warning: Absolute import failed: {e2}")
         try:
             # Try direct instantiation
             import sys
@@ -47,9 +47,9 @@ except ImportError as e1:
             from services.live_news_service import LiveNewsService
             live_news_service = LiveNewsService()
             LIVE_NEWS_ENABLED = True
-            print("✅ Live news service imported successfully (direct)")
+            print("Live news service imported successfully (direct)")
         except Exception as e3:
-            print(f"❌ All import methods failed: {e3}")
+            print(f"Error: All import methods failed: {e3}")
             LIVE_NEWS_ENABLED = False
             live_news_service = None
 
@@ -385,18 +385,18 @@ async def get_live_news(
     """
     try:
         if not LIVE_NEWS_ENABLED:
-            print("❌ Live news service not enabled")
+            print("Error: Live news service not enabled")
             raise HTTPException(status_code=503, detail="Live news service not available - check server logs")
         
         if live_news_service is None:
-            print("❌ live_news_service is None")
+            print("Error: live_news_service is None")
             raise HTTPException(status_code=503, detail="Live news service not initialized")
         
-        print(f"✅ Fetching live news: category={category}, limit={limit}")
+        print(f"Fetching live news: category={category}, limit={limit}")
         # Fetch live news
         articles = await live_news_service.fetch_live_news(category=category, limit=limit)
         
-        print(f"✅ Fetched {len(articles)} articles")
+        print(f"Fetched {len(articles)} articles")
         return {
             "status": "success",
             "total": len(articles),
@@ -410,7 +410,7 @@ async def get_live_news(
     except Exception as e:
         import traceback
         error_detail = f"{str(e)}\n{traceback.format_exc()}"
-        print(f"❌ Error in get_live_news: {error_detail}")
+        print(f"Error in get_live_news: {error_detail}")
         raise HTTPException(status_code=500, detail=f"Failed to fetch live news: {str(e)}")
 
 
@@ -1224,10 +1224,10 @@ def setup_news_routes(app):
         try:
             # Test database connectivity
             news_fetcher.get_news_statistics()
-            print("✅ News system initialized successfully")
+            print("News system initialized successfully")
             
         except Exception as e:
-            print(f"⚠️ News system initialization warning: {e}")
+            print(f"Warning: News system initialization warning: {e}")
     
     @app.on_event("shutdown")
     async def shutdown_news_system():
@@ -1235,9 +1235,9 @@ def setup_news_routes(app):
         try:
             if news_service.running:
                 news_service.stop()
-            print("✅ News system shutdown complete")
+            print("News system shutdown complete")
             
         except Exception as e:
-            print(f"⚠️ News system shutdown warning: {e}")
+            print(f"Warning: News system shutdown warning: {e}")
     
     return app

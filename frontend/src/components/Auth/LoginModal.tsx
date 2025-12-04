@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialMode?: 'admin' | 'user';
 }
 
-const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
-  const { login, register, error, isLoading, clearError } = useAuth();
+const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, initialMode = 'user' }) => {
+  const { login, register, loginAsAdmin, error, isLoading, clearError } = useAuth();
+  const navigate = useNavigate();
   const [isLoginMode, setIsLoginMode] = useState(true);
+  const [isAdminMode] = useState(initialMode === 'admin');
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -60,6 +64,12 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
     
     if (isLoginMode) {
       success = await login(formData.username, formData.password);
+      // Set role based on mode after successful login
+      if (success && isAdminMode) {
+        localStorage.setItem('user_role', 'admin');
+      } else if (success) {
+        localStorage.setItem('user_role', 'user');
+      }
     } else {
       success = await register({
         username: formData.username,
@@ -67,10 +77,17 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
         password: formData.password,
         full_name: formData.full_name
       });
+      // Set role based on mode after successful registration
+      if (success && isAdminMode) {
+        localStorage.setItem('user_role', 'admin');
+      } else if (success) {
+        localStorage.setItem('user_role', 'user');
+      }
     }
 
     if (success) {
       onClose();
+      navigate('/dashboard');
       setFormData({
         username: '',
         password: '',
@@ -79,6 +96,12 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
         confirmPassword: ''
       });
     }
+  };
+
+  const handleGoogleLogin = () => {
+    loginAsAdmin();
+    onClose();
+    navigate('/dashboard');
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,7 +133,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
         <div className="border-b-2 border-black p-4">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-black text-black uppercase tracking-wide font-serif">
-              📰 {isLoginMode ? 'Reader Login' : 'New Subscription'}
+              {isAdminMode ? '👨‍💼 Admin Access' : '📰 Reader Access'}
             </h2>
             <button
               onClick={onClose}
@@ -119,6 +142,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
               ✕
             </button>
           </div>
+          <p className="text-xs mt-2 font-serif text-gray-700">
+            {isLoginMode ? 'Sign in to your account' : 'Create a new account'}
+          </p>
         </div>
 
         {/* Form */}
@@ -228,6 +254,27 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
           >
             {isLoading ? '⏳ PROCESSING...' : (isLoginMode ? '🔓 LOGIN' : '📝 REGISTER')}
           </button>
+
+          {/* Google Login Option */}
+          <div className="mt-4">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t-2 border-black"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-black font-bold font-serif uppercase">OR</span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleGoogleLogin}
+              className="w-full mt-4 bg-white text-black py-3 px-6 font-black uppercase tracking-wide border-2 border-black hover:bg-gray-100 transition-colors font-serif flex items-center justify-center space-x-2"
+            >
+              <span>🔐</span>
+              <span>LOGIN WITH GOOGLE</span>
+            </button>
+          </div>
 
           {/* Mode Switch */}
           <div className="mt-4 text-center">

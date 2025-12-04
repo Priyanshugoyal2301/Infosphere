@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useGoogleLogin } from '@react-oauth/google';
 
 interface User {
   id: string;
@@ -9,13 +10,17 @@ interface User {
   last_login?: string;
 }
 
+type UserRole = 'admin' | 'user' | null;
+
 interface AuthContextType {
   user: User | null;
+  userRole: UserRole;
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (username: string, password: string) => Promise<boolean>;
   register: (userData: RegisterData) => Promise<boolean>;
   logout: () => void;
+  loginAsAdmin: () => void;
   error: string | null;
   clearError: () => void;
   refreshProfile: () => Promise<void>;
@@ -45,15 +50,68 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [userRole, setUserRole] = useState<UserRole>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const isAuthenticated = user !== null;
 
+  // Google OAuth hook - must be called at component level
+  const googleLogin = useGoogleLogin({
+    flow: 'implicit',
+    onSuccess: async (tokenResponse) => {
+      try {
+        // Fetch user info from Google
+        const userInfoResponse = await fetch(
+          'https://www.googleapis.com/oauth2/v3/userinfo',
+          {
+            headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+          }
+        );
+
+        if (userInfoResponse.ok) {
+          const googleUser = await userInfoResponse.json();
+          
+          const adminUser: User = {
+            id: googleUser.sub,
+            username: googleUser.email.split('@')[0],
+            email: googleUser.email,
+            full_name: googleUser.name,
+            created_at: new Date().toISOString()
+          };
+
+          setUser(adminUser);
+          setUserRole('admin');
+          localStorage.setItem('user_role', 'admin');
+          localStorage.setItem('google_token', tokenResponse.access_token);
+          setIsLoading(false);
+        } else {
+          setError('Failed to fetch Google user info');
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error('Google user info fetch error:', error);
+        setError('Failed to authenticate with Google');
+        setIsLoading(false);
+      }
+    },
+    onError: (error) => {
+      console.error('Google login error:', error);
+      setError('Google login failed');
+      setIsLoading(false);
+    },
+  });
+
   // Check for existing session on app load
   useEffect(() => {
     const checkSession = async () => {
       const token = localStorage.getItem('session_token');
+      const storedRole = localStorage.getItem('user_role') as UserRole;
+      
+      if (storedRole) {
+        setUserRole(storedRole);
+      }
+      
       if (token) {
         try {
           const response = await fetch('http://localhost:8000/api/v1/auth/me', {
@@ -97,6 +155,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const data = await response.json();
         setUser(data.user);
         localStorage.setItem('session_token', data.session_token);
+        
+        // Set role from localStorage if available
+        const storedRole = localStorage.getItem('user_role') as UserRole;
+        if (storedRole) {
+          setUserRole(storedRole);
+        }
+        
         setIsLoading(false);
         return true;
       } else {
@@ -163,8 +228,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
 
     setUser(null);
+    setUserRole(null);
     localStorage.removeItem('session_token');
+    localStorage.removeItem('user_role');
+    localStorage.removeItem('google_token');
     setError(null);
+  };
+
+  // Admin access with Google OAuth
+  const loginAsAdmin = () => {
+    setIsLoading(true);
+    setError(null);
+    googleLogin();
   };
 
   const clearError = () => {
@@ -223,11 +298,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const value: AuthContextType = {
     user,
+    userRole,
     isLoading,
     isAuthenticated,
     login,
     register,
     logout,
+    loginAsAdmin,
     error,
     clearError,
     refreshProfile,

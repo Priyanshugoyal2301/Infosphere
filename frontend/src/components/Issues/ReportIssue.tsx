@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
 import api from '../../utils/api';
 import NewspaperBorders from '../Layout/NewspaperBorders';
 import { ENABLE_NEWSPAPER_BORDERS } from '../../utils/newspaperBorders';
+import LoginModal from '../Auth/LoginModal';
 
 interface ComplaintFormData {
   title: string;
@@ -11,6 +13,8 @@ interface ComplaintFormData {
 }
 
 const ReportIssue: React.FC = () => {
+  const { isAuthenticated } = useAuth();
+  const [showLoginModal, setShowLoginModal] = useState(!isAuthenticated);
   const [formData, setFormData] = useState<ComplaintFormData>({
     title: '',
     description: '',
@@ -452,6 +456,13 @@ const ReportIssue: React.FC = () => {
         </div>
       </div>
       </div>
+
+      {/* Login Modal */}
+      <LoginModal 
+        isOpen={showLoginModal} 
+        onClose={() => setShowLoginModal(false)}
+        initialMode="user"
+      />
     </div>
   );
 };
