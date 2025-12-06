@@ -1,14 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-// Conditionally import Google OAuth - only if provider is available
-let useGoogleLogin: any = null;
-try {
-  const googleOAuth = require('@react-oauth/google');
-  useGoogleLogin = googleOAuth.useGoogleLogin;
-} catch (e) {
-  // Google OAuth not available
-  console.log('Google OAuth not configured');
-}
+// Check if Google OAuth is available
+const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || '';
 
 interface User {
   id: string;
@@ -30,6 +23,7 @@ interface AuthContextType {
   register: (userData: RegisterData) => Promise<boolean>;
   logout: () => void;
   loginAsAdmin: () => void;
+  loginWithGoogle: (tokenResponse: any) => Promise<void>;
   error: string | null;
   clearError: () => void;
   refreshProfile: () => Promise<void>;
@@ -64,60 +58,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [error, setError] = useState<string | null>(null);
 
   const isAuthenticated = user !== null;
-
-  // Google OAuth hook - only if available
-  let googleLogin: (() => void) | null = null;
-  
-  if (useGoogleLogin && typeof useGoogleLogin === 'function') {
-    try {
-      googleLogin = useGoogleLogin({
-        flow: 'implicit',
-        onSuccess: async (tokenResponse: any) => {
-          try {
-            // Fetch user info from Google
-            const userInfoResponse = await fetch(
-              'https://www.googleapis.com/oauth2/v3/userinfo',
-              {
-                headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-              }
-            );
-
-            if (userInfoResponse.ok) {
-              const googleUser = await userInfoResponse.json();
-              
-              const adminUser: User = {
-                id: googleUser.sub,
-                username: googleUser.email.split('@')[0],
-                email: googleUser.email,
-                full_name: googleUser.name,
-                created_at: new Date().toISOString()
-              };
-
-              setUser(adminUser);
-              setUserRole('admin');
-              localStorage.setItem('user_role', 'admin');
-              localStorage.setItem('google_token', tokenResponse.access_token);
-              setIsLoading(false);
-            } else {
-              setError('Failed to fetch Google user info');
-              setIsLoading(false);
-            }
-          } catch (error) {
-            console.error('Google user info fetch error:', error);
-            setError('Failed to authenticate with Google');
-            setIsLoading(false);
-          }
-        },
-        onError: (error: any) => {
-          console.error('Google login error:', error);
-          setError('Google login failed');
-          setIsLoading(false);
-        },
-      });
-    } catch (e) {
-      console.log('Google login hook not available');
-    }
-  }
 
   // Check for existing session on app load
   useEffect(() => {
@@ -252,15 +192,50 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setError(null);
   };
 
-  // Admin access with Google OAuth (if available)
-  const loginAsAdmin = () => {
-    if (googleLogin && typeof googleLogin === 'function') {
+  // Login with Google OAuth token
+  const loginWithGoogle = async (tokenResponse: any) => {
+    try {
       setIsLoading(true);
-      setError(null);
-      googleLogin();
-    } else {
-      // Fallback: If Google OAuth not available, use mock admin login
-      console.log('Google OAuth not available, using fallback admin login');
+      // Fetch user info from Google
+      const userInfoResponse = await fetch(
+        'https://www.googleapis.com/oauth2/v3/userinfo',
+        {
+          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+        }
+      );
+
+      if (userInfoResponse.ok) {
+        const googleUser = await userInfoResponse.json();
+        
+        const adminUser: User = {
+          id: googleUser.sub,
+          username: googleUser.email.split('@')[0],
+          email: googleUser.email,
+          full_name: googleUser.name,
+          created_at: new Date().toISOString()
+        };
+
+        setUser(adminUser);
+        setUserRole('admin');
+        localStorage.setItem('user_role', 'admin');
+        localStorage.setItem('google_token', tokenResponse.access_token);
+        setError(null);
+      } else {
+        setError('Failed to fetch Google user info');
+      }
+    } catch (error) {
+      console.error('Google user info fetch error:', error);
+      setError('Failed to authenticate with Google');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Admin access with fallback
+  const loginAsAdmin = () => {
+    if (!GOOGLE_CLIENT_ID) {
+      // Fallback: If Google OAuth not configured, use mock admin login
+      console.log('Google OAuth not configured, using fallback admin login');
       const adminUser: User = {
         id: 'admin-local',
         username: 'admin',
@@ -272,6 +247,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUserRole('admin');
       localStorage.setItem('user_role', 'admin');
       setError(null);
+    } else {
+      // Google OAuth is configured - component should handle Google login button
+      console.log('Google OAuth configured - use Google login button');
     }
   };
 
@@ -338,6 +316,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     register,
     logout,
     loginAsAdmin,
+    loginWithGoogle,
     error,
     clearError,
     refreshProfile,
