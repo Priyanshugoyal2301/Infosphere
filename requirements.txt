@@ -22,7 +22,8 @@ uvicorn[standard]>=0.20.0
 python-multipart>=0.0.5
 
 # Rate Limiting (CRITICAL for deployment)
-slowapi>=0.1.9
+slowapi==0.1.9
+limits>=3.0.0
 
 # Database & ORM
 sqlmodel>=0.0.8
@@ -44,9 +45,6 @@ httpx>=0.23.0
 pydantic>=1.10.0
 python-jose[cryptography]>=3.3.0
 passlib[bcrypt]>=1.7.4
-
-# Rate Limiting
-slowapi>=0.1.9
 
 # Utilities
 python-dotenv>=0.21.0
