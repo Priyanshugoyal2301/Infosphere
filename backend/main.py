@@ -7,9 +7,16 @@ import sys
 import os
 import json
 from dotenv import load_dotenv
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
-from slowapi.errors import RateLimitExceeded
+
+# Try to import rate limiting (optional for deployment)
+try:
+    from slowapi import Limiter, _rate_limit_exceeded_handler
+    from slowapi.util import get_remote_address
+    from slowapi.errors import RateLimitExceeded
+    RATE_LIMITING_AVAILABLE = True
+except ImportError:
+    print("Warning: slowapi not available, rate limiting disabled")
+    RATE_LIMITING_AVAILABLE = False
 
 # Add the backend directory to Python path for imports
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -87,8 +94,13 @@ async def lifespan(app: FastAPI):
     # Shutdown
     print("Shutting down Infosphere API...")
 
-# Initialize rate limiter
-limiter = Limiter(key_func=get_remote_address)
+# Initialize rate limiter (if available)
+if RATE_LIMITING_AVAILABLE:
+    limiter = Limiter(key_func=get_remote_address)
+    print("Rate limiting enabled")
+else:
+    limiter = None
+    print("Rate limiting disabled (slowapi not installed)")
 
 # Create FastAPI application
 app = FastAPI(
@@ -100,9 +112,11 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-# Add rate limiter state and exception handler
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+# Add rate limiter state and exception handler (if available)
+if RATE_LIMITING_AVAILABLE and limiter:
+    app.state.limiter = limiter
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+    print("Rate limiting middleware registered")
 
 # Configure CORS
 cors_origins_env = os.getenv("CORS_ORIGINS", "*")

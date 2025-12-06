@@ -2,8 +2,14 @@ from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form, R
 from sqlmodel import Session
 from typing import List, Optional, Dict, Any
 import logging
-from slowapi import Limiter
-from slowapi.util import get_remote_address
+
+# Try to import rate limiting (optional)
+try:
+    from slowapi import Limiter
+    from slowapi.util import get_remote_address
+    RATE_LIMITING_AVAILABLE = True
+except ImportError:
+    RATE_LIMITING_AVAILABLE = False
 
 from database.database import get_session
 from database.models import Policy, PolicyCreate, PolicyResponse, SentimentScore
@@ -13,8 +19,11 @@ from services.pdf_policy_service import pdf_policy_analyzer
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
-# Initialize rate limiter
-limiter = Limiter(key_func=get_remote_address)
+# Initialize rate limiter (if available)
+if RATE_LIMITING_AVAILABLE:
+    limiter = Limiter(key_func=get_remote_address)
+else:
+    limiter = None
 
 @router.post("/", response_model=PolicyResponse)
 async def create_policy(
@@ -395,11 +404,24 @@ async def analyze_policy_text(
         logger.error(f"❌ Policy text analysis failed: {e}")
         raise HTTPException(status_code=500, detail=f"Policy analysis failed: {str(e)}")
 
-@router.post("/summarize", response_model=Dict[str, Any])
-@limiter.limit("5/minute")
-async def summarize_pdf(
-    request: Request,
-    file: UploadFile = File(..., description="PDF policy document to summarize"),
+# Conditional rate limiting decorator
+if RATE_LIMITING_AVAILABLE and limiter:
+    @router.post("/summarize", response_model=Dict[str, Any])
+    @limiter.limit("5/minute")
+    async def summarize_pdf(
+        request: Request,
+        file: UploadFile = File(..., description="PDF policy document to summarize"),
+    ) -> Dict[str, Any]:
+        return await _summarize_pdf_impl(file)
+else:
+    @router.post("/summarize", response_model=Dict[str, Any])
+    async def summarize_pdf(
+        file: UploadFile = File(..., description="PDF policy document to summarize"),
+    ) -> Dict[str, Any]:
+        return await _summarize_pdf_impl(file)
+
+async def _summarize_pdf_impl(
+    file: UploadFile,
 ) -> Dict[str, Any]:
     """
     Quick PDF summarization endpoint with AI-powered BART model.
