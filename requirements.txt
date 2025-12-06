@@ -45,6 +45,7 @@ httpx>=0.23.0
 pydantic>=1.10.0
 python-jose[cryptography]>=3.3.0
 passlib[bcrypt]>=1.7.4
+beautifulsoup4>=4.11.0  # For web scraping and verification
 
 # Utilities
 python-dotenv>=0.21.0

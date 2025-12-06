@@ -12,6 +12,7 @@ import MySubmissions from './components/Issues/MySubmissions';
 import EnhancedMediaVerification from './components/Media/EnhancedMediaVerification';
 import PolicyDashboard from './components/Policy/PolicyDashboard';
 import RealTimeNews from './components/News/RealTimeNews';
+import FlaggedNews from './components/News/FlaggedNews';
 import './App.css';
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
               <Route path="/my-submissions" element={<MySubmissions />} />
               <Route path="/policy" element={<PolicyDashboard />} />
               <Route path="/news" element={<RealTimeNews />} />
+              <Route path="/flagged-news" element={<FlaggedNews />} />
             </Routes>
           </main>
           <Footer />

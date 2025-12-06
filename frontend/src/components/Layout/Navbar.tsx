@@ -14,6 +14,7 @@ const Navbar: React.FC = () => {
   const baseLinks = [
     { path: '/dashboard', label: 'NEWSROOM', icon: '🏠' },
     { path: '/news', label: 'LIVE NEWS', icon: '📡' },
+    { path: '/flagged-news', label: 'FLAGGED NEWS', icon: '🚩' },
   ];
 
   const roleSpecificLinks = userRole === 'admin' 
