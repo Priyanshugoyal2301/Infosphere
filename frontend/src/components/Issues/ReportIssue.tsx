@@ -143,10 +143,11 @@ const ReportIssue: React.FC = () => {
   if (submitResult?.success) {
     const issue = submitResult.data;
     return (
-      <div className="max-w-2xl mx-auto">
-        <div className="card text-center">
-          <div className="text-6xl mb-4">✅</div>
-          <h2 className="text-2xl font-bold text-green-600 mb-4">Issue Submitted Successfully!</h2>
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="max-w-2xl w-full">
+          <div className="card text-center bg-white">
+            <div className="text-6xl mb-4">✅</div>
+            <h2 className="text-2xl font-bold text-green-600 mb-4">Issue Submitted Successfully!</h2>
           
           <div className="border border-gray-300 rounded-lg p-6 mb-6" style={{background: '#f5f0e8'}}>
             <h3 className="font-semibold text-black mb-3">Issue Details</h3>
@@ -179,6 +180,7 @@ const ReportIssue: React.FC = () => {
             </button>
           </div>
         </div>
+      </div>
       </div>
     );
   }
