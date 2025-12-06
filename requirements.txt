@@ -21,6 +21,9 @@ fastapi>=0.88.0
 uvicorn[standard]>=0.20.0
 python-multipart>=0.0.5
 
+# Rate Limiting (CRITICAL for deployment)
+slowapi>=0.1.9
+
 # Database & ORM
 sqlmodel>=0.0.8
 psycopg2-binary>=2.9.5
