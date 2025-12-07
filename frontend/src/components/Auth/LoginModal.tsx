@@ -127,10 +127,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, initialMode = 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 newspaper-bg border-4 border-black">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-xl max-w-md w-full border-4 border-black">
         {/* Header */}
-        <div className="border-b-2 border-black p-4">
+        <div className="border-b-2 border-black p-4 bg-white">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-black text-black uppercase tracking-wide font-serif">
               {isAdminMode ? '👨‍💼 Admin Access' : '📰 Reader Access'}
@@ -148,7 +148,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, initialMode = 
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6">
+        <form onSubmit={handleSubmit} className="p-6 bg-white">
           {/* Error Messages */}
           {(error || validationErrors.length > 0) && (
             <div className="mb-4 p-3 bg-red-100 border-2 border-red-400 rounded">
@@ -292,7 +292,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, initialMode = 
         </form>
 
         {/* Footer */}
-        <div className="border-t-2 border-black p-3 bg-gray-100 text-center">
+        <div className="border-t-2 border-black p-3 bg-white text-center">
           <p className="text-xs font-bold text-black uppercase font-serif">
             🔒 SECURE • PRIVATE • TRUSTED
           </p>
