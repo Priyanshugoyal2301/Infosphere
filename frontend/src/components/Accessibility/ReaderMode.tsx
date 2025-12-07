@@ -86,20 +86,26 @@ const ReaderMode: React.FC<ReaderModeProps> = ({ isOpen, onClose, article }) => 
     };
   }, []);
 
+  // ESC key to close
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden">
-      {/* Overlay */}
-      <div 
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-        onClick={onClose}
-      />
-
-      {/* Reader Mode Container */}
-      <div className="relative h-full flex">
+    <div className="fixed inset-0 z-[9999] overflow-hidden">
+      {/* Reader Mode Container - Full Screen, No Distractions */}
+      <div className="relative h-full w-full flex">
         {/* Settings Sidebar */}
-        <div className="w-80 bg-white shadow-2xl overflow-y-auto border-r-4 border-black">
+        <div className="w-80 bg-white shadow-2xl overflow-y-auto border-r-4 border-black z-10">
           <div className="p-6 space-y-6">
             <div className="flex items-center justify-between border-b-2 border-black pb-4">
               <div className="flex items-center space-x-2">
@@ -108,9 +114,10 @@ const ReaderMode: React.FC<ReaderModeProps> = ({ isOpen, onClose, article }) => 
               </div>
               <button
                 onClick={onClose}
-                className="p-2 hover:bg-gray-100 rounded border-2 border-black transition-colors"
+                className="p-2 hover:bg-red-100 rounded border-2 border-red-600 bg-red-50 transition-colors"
+                title="Close Reader Mode (ESC)"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5 text-red-600" />
               </button>
             </div>
 
@@ -284,6 +291,15 @@ const ReaderMode: React.FC<ReaderModeProps> = ({ isOpen, onClose, article }) => 
             color: currentScheme.text
           }}
         >
+          {/* Floating Close Button */}
+          <button
+            onClick={onClose}
+            className="fixed top-4 right-4 z-20 p-3 bg-red-600 text-white rounded-full shadow-lg hover:bg-red-700 transition-all border-2 border-white"
+            title="Close Reader Mode (ESC)"
+          >
+            <X className="w-6 h-6" />
+          </button>
+
           {/* Focus Mode Overlay */}
           {focusMode && (
             <div className="absolute inset-0 pointer-events-none">
@@ -312,13 +328,13 @@ const ReaderMode: React.FC<ReaderModeProps> = ({ isOpen, onClose, article }) => 
             />
           )}
 
-          <div className="max-w-3xl mx-auto px-8 py-12">
+          <div className="max-w-4xl mx-auto px-8 py-12 pb-24">
             {article ? (
-              <article className="space-y-6">
+              <article className="space-y-8">
                 {/* Article Header */}
                 <div className="space-y-4 pb-6 border-b-2" style={{ borderColor: currentScheme.accent }}>
                   <h1 
-                    className="font-bold leading-tight"
+                    className="font-bold leading-tight break-words"
                     style={{
                       fontSize: `${fontSize + 8}px`,
                       lineHeight: lineHeight,
@@ -327,12 +343,16 @@ const ReaderMode: React.FC<ReaderModeProps> = ({ isOpen, onClose, article }) => 
                   >
                     {article.title}
                   </h1>
-                  <div className="flex items-center space-x-4 text-sm opacity-75">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm opacity-75">
                     <span className="font-semibold">{article.source}</span>
                     {article.published_date && (
                       <>
-                        <span>•</span>
-                        <span>{new Date(article.published_date).toLocaleDateString()}</span>
+                        <span className="hidden sm:inline">•</span>
+                        <span>{new Date(article.published_date).toLocaleDateString('en-US', { 
+                          year: 'numeric', 
+                          month: 'long', 
+                          day: 'numeric' 
+                        })}</span>
                       </>
                     )}
                   </div>
@@ -340,7 +360,7 @@ const ReaderMode: React.FC<ReaderModeProps> = ({ isOpen, onClose, article }) => 
 
                 {/* Article Content */}
                 <div 
-                  className="prose prose-lg max-w-none"
+                  className="prose prose-lg max-w-none space-y-4"
                   style={{
                     fontSize: `${fontSize}px`,
                     lineHeight: lineHeight,
@@ -348,13 +368,21 @@ const ReaderMode: React.FC<ReaderModeProps> = ({ isOpen, onClose, article }) => 
                     color: currentScheme.text
                   }}
                 >
-                  {article.content.split('\n').map((paragraph, idx) => (
-                    paragraph.trim() && (
-                      <p key={idx} className="mb-4">
-                        {paragraph}
+                  {article.content.split(/\n+/).map((paragraph, idx) => {
+                    const trimmed = paragraph.trim();
+                    if (!trimmed) return null;
+                    
+                    return (
+                      <p key={idx} style={{ 
+                        marginBottom: `${lineHeight * 1.2}em`,
+                        textAlign: 'left',
+                        wordWrap: 'break-word',
+                        overflowWrap: 'break-word'
+                      }}>
+                        {trimmed}
                       </p>
-                    )
-                  ))}
+                    );
+                  })}
                 </div>
 
                 {/* Article Footer */}

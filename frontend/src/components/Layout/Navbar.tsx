@@ -10,10 +10,9 @@ import { Home, Radio, Flag, FileText, BarChart3, Shield, Briefcase, User, LogOut
 const Navbar: React.FC = () => {
   const location = useLocation();
   const { user, userRole, isAuthenticated, logout } = useAuth();
-  const { currentArticle } = useReader();
+  const { isReaderOpen, closeReaderMode, currentArticle } = useReader();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
-  const [showReaderMode, setShowReaderMode] = useState(false);
 
   // Role-based navigation links
   const baseLinks = [
@@ -107,7 +106,7 @@ const Navbar: React.FC = () => {
           <div className="hidden md:flex items-center space-x-3">
             {/* Reader Access Button */}
             <button
-              onClick={() => setShowReaderMode(true)}
+              onClick={() => currentArticle ? closeReaderMode() || window.dispatchEvent(new Event('openReaderMode')) : alert('Select an article first by clicking "📖 READER MODE" on any article')}
               className="flex items-center gap-1 text-xs font-bold text-black uppercase hover:bg-blue-50 px-3 py-1.5 border-2 border-blue-600 bg-blue-100 transition-colors"
               title="Open Reader Mode - Accessibility features for ADHD and easier reading"
             >
@@ -170,7 +169,7 @@ const Navbar: React.FC = () => {
           <div className="space-y-2">
             {/* Reader Access Button - Mobile */}
             <button
-              onClick={() => setShowReaderMode(true)}
+              onClick={() => currentArticle ? closeReaderMode() || window.dispatchEvent(new Event('openReaderMode')) : alert('Select an article first by clicking "📖 READER MODE" on any article')}
               className="w-full flex items-center gap-2 px-4 py-3 text-sm font-black uppercase text-blue-700 bg-blue-50 border-2 border-blue-600 hover:bg-blue-100 transition-colors"
             >
               <Book size={18} strokeWidth={2.5} />
@@ -236,8 +235,8 @@ const Navbar: React.FC = () => {
       
       {/* Reader Mode */}
       <ReaderMode 
-        isOpen={showReaderMode} 
-        onClose={() => setShowReaderMode(false)}
+        isOpen={isReaderOpen} 
+        onClose={closeReaderMode}
         article={currentArticle || undefined}
       />
     </nav>
