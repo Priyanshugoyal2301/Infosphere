@@ -4,13 +4,12 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useReader } from '../../contexts/ReaderContext';
 import LoginModal from '../Auth/LoginModal';
 import ProfileModal from '../Auth/ProfileModal';
-import ReaderMode from '../Accessibility/ReaderMode';
 import { Home, Radio, Flag, FileText, BarChart3, Shield, Briefcase, User, LogOut, Menu, Newspaper, Microscope, Book } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const location = useLocation();
   const { user, userRole, isAuthenticated, logout } = useAuth();
-  const { isReaderOpen, closeReaderMode, currentArticle } = useReader();
+  const { currentArticle } = useReader();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
 
@@ -248,13 +247,6 @@ const Navbar: React.FC = () => {
       
       {/* Profile Modal */}
       <ProfileModal isOpen={showProfileModal} onClose={() => setShowProfileModal(false)} />
-      
-      {/* Reader Mode */}
-      <ReaderMode 
-        isOpen={isReaderOpen} 
-        onClose={closeReaderMode}
-        article={currentArticle || undefined}
-      />
     </nav>
   );
 };

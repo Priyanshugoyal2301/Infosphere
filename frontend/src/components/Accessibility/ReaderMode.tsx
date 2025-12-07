@@ -21,6 +21,7 @@ const ReaderMode: React.FC<ReaderModeProps> = ({ isOpen, onClose, article }) => 
   const [dyslexicFont, setDyslexicFont] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
   const [readingGuide, setReadingGuide] = useState(false);
+  const [guidePosition, setGuidePosition] = useState(0);
   const [speechEnabled, setSpeechEnabled] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
 
@@ -98,12 +99,24 @@ const ReaderMode: React.FC<ReaderModeProps> = ({ isOpen, onClose, article }) => 
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
+  // Mouse tracking for reading guide
+  useEffect(() => {
+    if (!readingGuide || !isOpen) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      setGuidePosition(e.clientY);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [readingGuide, isOpen]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] overflow-hidden">
+    <div className="fixed inset-0 z-[99999] overflow-hidden bg-white">
       {/* Reader Mode Container - Full Screen, No Distractions */}
-      <div className="relative h-full w-full flex">
+      <div className="relative h-full w-full flex" style={{ backgroundColor: currentScheme.bg }}>
         {/* Settings Sidebar */}
         <div className="w-80 bg-white shadow-2xl overflow-y-auto border-r-4 border-black z-10">
           <div className="p-6 space-y-6">
@@ -319,11 +332,12 @@ const ReaderMode: React.FC<ReaderModeProps> = ({ isOpen, onClose, article }) => 
           {/* Reading Guide */}
           {readingGuide && (
             <div 
-              className="fixed left-80 right-0 h-0.5 pointer-events-none transition-all duration-100 z-10"
+              className="fixed left-0 right-0 h-1 pointer-events-none z-10"
               style={{
-                top: '50%',
+                top: `${guidePosition}px`,
                 backgroundColor: currentScheme.accent,
-                boxShadow: `0 0 10px ${currentScheme.accent}`
+                boxShadow: `0 0 20px ${currentScheme.accent}, 0 0 40px ${currentScheme.accent}80`,
+                transition: 'top 0.05s ease-out'
               }}
             />
           )}
