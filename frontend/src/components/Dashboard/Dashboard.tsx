@@ -446,22 +446,22 @@ Sources: Times of India RSS, NDTV Live Feed, Indian Express API...`);
             </h3>
             <div className="stats-grid-classic">
               <div className="stat-card-classic">
-                <h4 className="bold-title" style={{color: '#1a1a1a !important'}}>Crime</h4>
+                <h4 className="bold-title">Crime</h4>
                 <div className="stat-number-classic" style={{color: '#dc2626'}}>{newsStats.categoryCounts.crime}</div>
                 <div className="stat-label-classic italic-content">🚨 Criminal Affairs</div>
               </div>
               <div className="stat-card-classic">
-                <h4 className="bold-title" style={{color: '#1a1a1a !important'}}>Accidents</h4>
+                <h4 className="bold-title">Accidents</h4>
                 <div className="stat-number-classic" style={{color: '#ea580c'}}>{newsStats.categoryCounts.accident}</div>
                 <div className="stat-label-classic italic-content">🚗 Traffic & Safety</div>
               </div>
               <div className="stat-card-classic">
-                <h4 className="bold-title" style={{color: '#1a1a1a !important'}}>Events</h4>
+                <h4 className="bold-title">Events</h4>
                 <div className="stat-number-classic" style={{color: '#2563eb'}}>{newsStats.categoryCounts.event}</div>
                 <div className="stat-label-classic italic-content">🎉 Social Events</div>
               </div>
               <div className="stat-card-classic">
-                <h4 className="bold-title" style={{color: '#1a1a1a !important'}}>Weather</h4>
+                <h4 className="bold-title">Weather</h4>
                 <div className="stat-number-classic" style={{color: '#16a34a'}}>{newsStats.categoryCounts.weather}</div>
                 <div className="stat-label-classic italic-content">🌤️ Weather Reports</div>
               </div>
