@@ -106,12 +106,20 @@ const Navbar: React.FC = () => {
           <div className="hidden md:flex items-center space-x-3">
             {/* Reader Access Button */}
             <button
-              onClick={() => currentArticle ? closeReaderMode() || window.dispatchEvent(new Event('openReaderMode')) : alert('Select an article first by clicking "📖 READER MODE" on any article')}
-              className="flex items-center gap-1 text-xs font-bold text-black uppercase hover:bg-blue-50 px-3 py-1.5 border-2 border-blue-600 bg-blue-100 transition-colors"
-              title="Open Reader Mode - Accessibility features for ADHD and easier reading"
+              onClick={() => {
+                if (!currentArticle) {
+                  alert('Select an article first by clicking "📖 READER MODE" on any article');
+                }
+              }}
+              className={`flex items-center gap-1 text-xs font-bold uppercase px-3 py-1.5 border-2 transition-colors ${
+                currentArticle 
+                  ? 'text-white bg-blue-600 border-blue-700 hover:bg-blue-700 cursor-default' 
+                  : 'text-black bg-blue-100 border-blue-600 hover:bg-blue-50 cursor-pointer'
+              }`}
+              title={currentArticle ? `Reading: ${currentArticle.title.substring(0, 50)}...` : "Select an article to use Reader Mode"}
             >
               <Book size={16} strokeWidth={2.5} />
-              READER ACCESS
+              {currentArticle ? 'READING...' : 'READER ACCESS'}
             </button>
             
             {isAuthenticated && user ? (
@@ -169,11 +177,19 @@ const Navbar: React.FC = () => {
           <div className="space-y-2">
             {/* Reader Access Button - Mobile */}
             <button
-              onClick={() => currentArticle ? closeReaderMode() || window.dispatchEvent(new Event('openReaderMode')) : alert('Select an article first by clicking "📖 READER MODE" on any article')}
-              className="w-full flex items-center gap-2 px-4 py-3 text-sm font-black uppercase text-blue-700 bg-blue-50 border-2 border-blue-600 hover:bg-blue-100 transition-colors"
+              onClick={() => {
+                if (!currentArticle) {
+                  alert('Select an article first by clicking "📖 READER MODE" on any article');
+                }
+              }}
+              className={`w-full flex items-center gap-2 px-4 py-3 text-sm font-black uppercase border-2 transition-colors ${
+                currentArticle
+                  ? 'text-white bg-blue-600 border-blue-700 hover:bg-blue-700'
+                  : 'text-blue-700 bg-blue-50 border-blue-600 hover:bg-blue-100'
+              }`}
             >
               <Book size={18} strokeWidth={2.5} />
-              READER ACCESS MODE
+              {currentArticle ? 'READING...' : 'READER ACCESS MODE'}
             </button>
             
             {navLinks.map((link) => {
