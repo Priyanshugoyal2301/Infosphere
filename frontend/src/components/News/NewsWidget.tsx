@@ -135,8 +135,10 @@ const NewsWidget: React.FC<NewsWidgetProps> = ({
   }, [limit, fetchLatestNews]);
 
   const formatTimeAgo = (dateString: string) => {
+    if (!dateString) return 'N/A';
     const now = new Date();
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Invalid Date';
     const diffMs = now.getTime() - date.getTime();
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMins / 60);

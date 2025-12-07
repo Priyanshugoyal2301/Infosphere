@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
+import { Flag, RefreshCw } from 'lucide-react';
 
 interface FlaggedArticle {
   id: number;
@@ -74,7 +75,9 @@ const FlaggedNews: React.FC = () => {
   };
 
   const formatDate = (dateString: string): string => {
+    if (!dateString) return 'N/A';
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Invalid Date';
     return date.toLocaleString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -115,8 +118,8 @@ const FlaggedNews: React.FC = () => {
     <div className="max-w-[1600px] mx-auto px-6 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">
-          🚩 Flagged News Articles
+        <h1 className="text-4xl font-bold text-gray-900 mb-2 flex items-center gap-3">
+          <Flag size={36} strokeWidth={2.5} className="text-red-600" /> Flagged News Articles
         </h1>
         <p className="text-gray-600">
           Articles that failed advanced verification checks and require scrutiny

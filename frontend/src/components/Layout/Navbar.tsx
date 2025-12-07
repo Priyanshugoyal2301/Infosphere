@@ -44,13 +44,13 @@ const Navbar: React.FC = () => {
   }
 
   return (
-    <nav className="border-t-4 border-b-4 border-black newspaper-bg relative z-40 mt-8" style={{background: '#e8dcc8'}}>
+    <nav className="border-t-4 border-b-4 border-black newspaper-bg relative z-10 mt-8" style={{background: '#e8dcc8'}}>
       <div className="container mx-auto px-4">
         {/* Main Header */}
         <div className="border-b-2 border-black py-2">
           <div className="text-center">
             <div className="newspaper-title text-3xl font-black text-black tracking-wider flex items-center justify-center gap-2">
-              <Newspaper size={32} strokeWidth={2.5} />
+              <Newspaper size={40} strokeWidth={2.5} />
               THE INFOSPHERE HERALD
             </div>
             <div className="text-xs font-bold text-black uppercase tracking-widest">
@@ -78,13 +78,13 @@ const Navbar: React.FC = () => {
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`flex items-center space-x-1 px-3 py-1 text-xs font-black uppercase tracking-wide transition-all duration-200 border-2 border-transparent ${
+                  className={`flex items-center space-x-2 px-3 py-1 text-xs font-black uppercase tracking-wide transition-all duration-200 border-2 border-transparent ${
                     isActive(link.path)
                       ? 'bg-black text-white border-black'
                       : 'text-black hover:bg-gray-100 hover:border-black'
                   }`}
                 >
-                  <IconComponent size={16} strokeWidth={2.5} />
+                  <IconComponent size={24} strokeWidth={2.5} />
                   <span>{link.label}</span>
                 </Link>
               );
@@ -105,9 +105,9 @@ const Navbar: React.FC = () => {
                 {userRole && (
                   <span className="text-xs font-black text-white bg-black px-3 py-1 border-2 border-black uppercase flex items-center gap-1">
                     {userRole === 'admin' ? (
-                      <><Briefcase size={14} strokeWidth={2.5} /> ADMIN</>
+                      <><Briefcase size={16} strokeWidth={2.5} /> ADMIN</>
                     ) : (
-                      <><Newspaper size={14} strokeWidth={2.5} /> READER</>
+                      <><Newspaper size={16} strokeWidth={2.5} /> READER</>
                     )}
                   </span>
                 )}
@@ -116,7 +116,7 @@ const Navbar: React.FC = () => {
                   className="flex items-center space-x-2 text-xs font-bold text-black uppercase hover:bg-gray-100 px-2 py-1 border-2 border-black transition-colors"
                 >
                   <span>Welcome, {user.username}</span>
-                  <User size={14} strokeWidth={2.5} />
+                  <User size={18} strokeWidth={2.5} />
                 </button>
                 <div className="w-8 h-8 bg-black border-2 border-black flex items-center justify-center text-white font-black text-xs">
                   {user.username.charAt(0).toUpperCase()}
