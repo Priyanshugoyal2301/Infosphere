@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { ReaderProvider } from './contexts/ReaderContext';
 import Navbar from './components/Layout/Navbar';
 import Footer from './components/Layout/Footer';
 import LandingPage from './components/Landing/LandingPage';
@@ -19,27 +20,29 @@ import './App.css';
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <div className="min-h-screen bg-secondary-50">
-          <Navbar />
-          <main className="max-w-[1600px] mx-auto px-6 py-8">
-            <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/admin/reports" element={<ViewReports />} />
-              <Route path="/report" element={<ReportIssue />} />
-              <Route path="/analytics" element={<Analytics />} />
-              <Route path="/verify" element={<EnhancedMediaVerification />} />
-              <Route path="/my-submissions" element={<MySubmissions />} />
-              <Route path="/policy" element={<PolicyDashboard />} />
-              <Route path="/news" element={<RealTimeNews />} />
-              <Route path="/flagged-news" element={<FlaggedNews />} />
-              <Route path="/advanced-verification" element={<AdvancedVerificationDashboard />} />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
-      </Router>
+      <ReaderProvider>
+        <Router>
+          <div className="min-h-screen bg-secondary-50">
+            <Navbar />
+            <main className="max-w-[1600px] mx-auto px-6 py-8">
+              <Routes>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/admin/reports" element={<ViewReports />} />
+                <Route path="/report" element={<ReportIssue />} />
+                <Route path="/analytics" element={<Analytics />} />
+                <Route path="/verify" element={<EnhancedMediaVerification />} />
+                <Route path="/my-submissions" element={<MySubmissions />} />
+                <Route path="/policy" element={<PolicyDashboard />} />
+                <Route path="/news" element={<RealTimeNews />} />
+                <Route path="/flagged-news" element={<FlaggedNews />} />
+                <Route path="/advanced-verification" element={<AdvancedVerificationDashboard />} />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        </Router>
+      </ReaderProvider>
     </AuthProvider>
   );
 }

@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useReader } from '../../contexts/ReaderContext';
 import LoginModal from '../Auth/LoginModal';
 import ProfileModal from '../Auth/ProfileModal';
-import { Home, Radio, Flag, FileText, BarChart3, Shield, Briefcase, User, LogOut, Menu, Newspaper, Microscope } from 'lucide-react';
+import ReaderMode from '../Accessibility/ReaderMode';
+import { Home, Radio, Flag, FileText, BarChart3, Shield, Briefcase, User, LogOut, Menu, Newspaper, Microscope, Book } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const location = useLocation();
   const { user, userRole, isAuthenticated, logout } = useAuth();
+  const { currentArticle } = useReader();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showReaderMode, setShowReaderMode] = useState(false);
 
   // Role-based navigation links
   const baseLinks = [
@@ -101,6 +105,16 @@ const Navbar: React.FC = () => {
 
           {/* User Menu */}
           <div className="hidden md:flex items-center space-x-3">
+            {/* Reader Access Button */}
+            <button
+              onClick={() => setShowReaderMode(true)}
+              className="flex items-center gap-1 text-xs font-bold text-black uppercase hover:bg-blue-50 px-3 py-1.5 border-2 border-blue-600 bg-blue-100 transition-colors"
+              title="Open Reader Mode - Accessibility features for ADHD and easier reading"
+            >
+              <Book size={16} strokeWidth={2.5} />
+              READER ACCESS
+            </button>
+            
             {isAuthenticated && user ? (
               <>
                 {userRole && (
@@ -132,7 +146,7 @@ const Navbar: React.FC = () => {
               </>
             ) : (
               <>
-                <div className="text-xs font-bold text-black uppercase">READER ACCESS</div>
+                <div className="text-xs font-bold text-black uppercase">VISITOR</div>
                 <button
                   onClick={() => setShowLoginModal(true)}
                   className="w-8 h-8 bg-black border-2 border-black flex items-center justify-center text-white font-black text-xs hover:bg-gray-800 transition-colors"
@@ -154,6 +168,15 @@ const Navbar: React.FC = () => {
         {/* Mobile Navigation (Hidden by default) */}
         <div className="md:hidden border-t-2 border-black py-4">
           <div className="space-y-2">
+            {/* Reader Access Button - Mobile */}
+            <button
+              onClick={() => setShowReaderMode(true)}
+              className="w-full flex items-center gap-2 px-4 py-3 text-sm font-black uppercase text-blue-700 bg-blue-50 border-2 border-blue-600 hover:bg-blue-100 transition-colors"
+            >
+              <Book size={18} strokeWidth={2.5} />
+              READER ACCESS MODE
+            </button>
+            
             {navLinks.map((link) => {
               const IconComponent = link.icon;
               return (
@@ -210,6 +233,13 @@ const Navbar: React.FC = () => {
       
       {/* Profile Modal */}
       <ProfileModal isOpen={showProfileModal} onClose={() => setShowProfileModal(false)} />
+      
+      {/* Reader Mode */}
+      <ReaderMode 
+        isOpen={showReaderMode} 
+        onClose={() => setShowReaderMode(false)}
+        article={currentArticle || undefined}
+      />
     </nav>
   );
 };

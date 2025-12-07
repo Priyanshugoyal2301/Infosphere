@@ -14,7 +14,7 @@ except ImportError:
 from database.database import get_session
 from database.models import Policy, PolicyCreate, PolicyResponse, SentimentScore
 from services.policy_service import PolicyService
-from services.pdf_policy_service import pdf_policy_analyzer
+from services.pdf_policy_service import get_pdf_policy_analyzer
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -301,7 +301,7 @@ async def upload_policy_pdf(
         logger.info(f"📄 Processing PDF upload: {file.filename}")
         
         # Analyze PDF using the PDF policy analyzer
-        analysis_result = pdf_policy_analyzer.analyze_policy_pdf(file.file, file.filename)
+        analysis_result = get_pdf_policy_analyzer().analyze_policy_pdf(file.file, file.filename)
         
         if not analysis_result['success']:
             raise HTTPException(status_code=400, detail=f"PDF analysis failed: {analysis_result['error']}")
@@ -464,7 +464,7 @@ async def _summarize_pdf_impl(
         
         # Extract text from PDF (returns tuple: text, metadata)
         try:
-            full_text, text_metadata = pdf_policy_analyzer.extract_text_from_pdf(file.file)
+            full_text, text_metadata = get_pdf_policy_analyzer().extract_text_from_pdf(file.file)
         except Exception as e:
             raise HTTPException(
                 status_code=400, 

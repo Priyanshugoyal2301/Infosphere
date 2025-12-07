@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useReader } from '../../contexts/ReaderContext';
 import NewspaperBorders from '../Layout/NewspaperBorders';
 import { ENABLE_NEWSPAPER_BORDERS } from '../../utils/newspaperBorders';
 import './RealTimeNews.css';
@@ -127,6 +128,7 @@ interface AnalyticsData {
 }
 
 const RealTimeNews: React.FC = () => {
+  const { openReaderMode } = useReader();
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [statistics, setStatistics] = useState<NewsStatistics | null>(null);
   const [loading, setLoading] = useState(true);
@@ -1154,7 +1156,7 @@ const RealTimeNews: React.FC = () => {
                     </div>
 
                     {article.url && (
-                      <div className="mt-3">
+                      <div className="mt-3 flex gap-2">
                         <a 
                           href={article.url} 
                           target="_blank" 
@@ -1163,6 +1165,18 @@ const RealTimeNews: React.FC = () => {
                         >
                           🔗 READ FULL
                         </a>
+                        <button
+                          onClick={() => openReaderMode({
+                            title: article.title,
+                            content: article.content,
+                            source: article.source,
+                            published_date: article.published_date,
+                            url: article.url
+                          })}
+                          className="bg-blue-600 text-white font-black py-1 px-3 text-xs uppercase tracking-wide hover:bg-blue-700 transition-colors inline-block"
+                        >
+                          📖 READER MODE
+                        </button>
                       </div>
                     )}
                   </div>

@@ -626,5 +626,12 @@ class PDFPolicyAnalyzer:
                 'analysis_timestamp': datetime.now().isoformat()
             }
 
-# Global instance
-pdf_policy_analyzer = PDFPolicyAnalyzer()
+# Global instance - using lazy initialization to avoid startup delays
+_pdf_policy_analyzer_instance = None
+
+def get_pdf_policy_analyzer():
+    """Get or create the PDF policy analyzer instance"""
+    global _pdf_policy_analyzer_instance
+    if _pdf_policy_analyzer_instance is None:
+        _pdf_policy_analyzer_instance = PDFPolicyAnalyzer()
+    return _pdf_policy_analyzer_instance
