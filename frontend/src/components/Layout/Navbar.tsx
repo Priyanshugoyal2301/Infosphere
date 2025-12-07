@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import LoginModal from '../Auth/LoginModal';
 import ProfileModal from '../Auth/ProfileModal';
+import { Home, Radio, Flag, FileText, BarChart3, Shield, Briefcase, User, LogOut, Menu, Newspaper } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const location = useLocation();
@@ -12,19 +13,19 @@ const Navbar: React.FC = () => {
 
   // Role-based navigation links
   const baseLinks = [
-    { path: '/dashboard', label: 'NEWSROOM', icon: '🏠' },
-    { path: '/news', label: 'LIVE NEWS', icon: '📡' },
-    { path: '/flagged-news', label: 'FLAGGED NEWS', icon: '🚩' },
+    { path: '/dashboard', label: 'NEWSROOM', icon: Home },
+    { path: '/news', label: 'LIVE NEWS', icon: Radio },
+    { path: '/flagged-news', label: 'FLAGGED NEWS', icon: Flag },
   ];
 
   const roleSpecificLinks = userRole === 'admin' 
-    ? [{ path: '/admin/reports', label: 'VIEW REPORTS', icon: '📋' }]
-    : [{ path: '/report', label: 'SUBMIT STORY', icon: '📝' }];
+    ? [{ path: '/admin/reports', label: 'VIEW REPORTS', icon: FileText }]
+    : [{ path: '/report', label: 'SUBMIT STORY', icon: FileText }];
 
   const commonLinks = [
-    { path: '/analytics', label: 'ANALYTICS', icon: '📊' },
-    { path: '/verify', label: userRole === 'admin' ? 'FACTS REPORTED' : 'FACT CHECK', icon: '🔍' },
-    { path: '/policy', label: 'POLICY DESK', icon: '📋' },
+    { path: '/analytics', label: 'ANALYTICS', icon: BarChart3 },
+    { path: '/verify', label: userRole === 'admin' ? 'FACTS REPORTED' : 'FACT CHECK', icon: Shield },
+    { path: '/policy', label: 'POLICY DESK', icon: Briefcase },
   ];
 
   // Show all links when on dashboard, show basic links on landing page
@@ -43,13 +44,14 @@ const Navbar: React.FC = () => {
   }
 
   return (
-    <nav className="border-t-4 border-b-4 border-black newspaper-bg relative z-30 mt-8" style={{background: '#e8dcc8'}}>
+    <nav className="border-t-4 border-b-4 border-black newspaper-bg relative z-40 mt-8" style={{background: '#e8dcc8'}}>
       <div className="container mx-auto px-4">
         {/* Main Header */}
         <div className="border-b-2 border-black py-2">
           <div className="text-center">
-            <div className="newspaper-title text-3xl font-black text-black tracking-wider">
-              📰 THE INFOSPHERE HERALD
+            <div className="newspaper-title text-3xl font-black text-black tracking-wider flex items-center justify-center gap-2">
+              <Newspaper size={32} strokeWidth={2.5} />
+              THE INFOSPHERE HERALD
             </div>
             <div className="text-xs font-bold text-black uppercase tracking-widest">
               "ALL THE NEWS THAT'S FIT TO VERIFY"
@@ -70,28 +72,29 @@ const Navbar: React.FC = () => {
 
           {/* Navigation Links */}
           <div className="hidden md:flex space-x-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`flex items-center space-x-1 px-3 py-1 text-xs font-black uppercase tracking-wide transition-all duration-200 border-2 border-transparent ${
-                  isActive(link.path)
-                    ? 'bg-black text-white border-black'
-                    : 'text-black hover:bg-gray-100 hover:border-black'
-                }`}
-              >
-                <span className="text-sm">{link.icon}</span>
-                <span>{link.label}</span>
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const IconComponent = link.icon;
+              return (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`flex items-center space-x-1 px-3 py-1 text-xs font-black uppercase tracking-wide transition-all duration-200 border-2 border-transparent ${
+                    isActive(link.path)
+                      ? 'bg-black text-white border-black'
+                      : 'text-black hover:bg-gray-100 hover:border-black'
+                  }`}
+                >
+                  <IconComponent size={16} strokeWidth={2.5} />
+                  <span>{link.label}</span>
+                </Link>
+              );
+            })}
           </div>
 
           {/* Mobile Menu Button */}
           <div className="md:hidden">
             <button className="text-black hover:bg-gray-100 p-2 border-2 border-black font-black">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
+              <Menu size={24} strokeWidth={3} />
             </button>
           </div>
 
@@ -100,8 +103,12 @@ const Navbar: React.FC = () => {
             {isAuthenticated && user ? (
               <>
                 {userRole && (
-                  <span className="text-xs font-black text-white bg-black px-3 py-1 border-2 border-black uppercase">
-                    {userRole === 'admin' ? '👨‍💼 ADMIN' : '📰 READER'}
+                  <span className="text-xs font-black text-white bg-black px-3 py-1 border-2 border-black uppercase flex items-center gap-1">
+                    {userRole === 'admin' ? (
+                      <><Briefcase size={14} strokeWidth={2.5} /> ADMIN</>
+                    ) : (
+                      <><Newspaper size={14} strokeWidth={2.5} /> READER</>
+                    )}
                   </span>
                 )}
                 <button
@@ -109,15 +116,16 @@ const Navbar: React.FC = () => {
                   className="flex items-center space-x-2 text-xs font-bold text-black uppercase hover:bg-gray-100 px-2 py-1 border-2 border-black transition-colors"
                 >
                   <span>Welcome, {user.username}</span>
-                  <span className="text-sm">👤</span>
+                  <User size={14} strokeWidth={2.5} />
                 </button>
                 <div className="w-8 h-8 bg-black border-2 border-black flex items-center justify-center text-white font-black text-xs">
                   {user.username.charAt(0).toUpperCase()}
                 </div>
                 <button
                   onClick={logout}
-                  className="text-xs font-bold text-black uppercase hover:bg-gray-100 px-2 py-1 border-2 border-black transition-colors"
+                  className="flex items-center gap-1 text-xs font-bold text-black uppercase hover:bg-gray-100 px-2 py-1 border-2 border-black transition-colors"
                 >
+                  <LogOut size={14} strokeWidth={2.5} />
                   LOGOUT
                 </button>
               </>
@@ -128,12 +136,13 @@ const Navbar: React.FC = () => {
                   onClick={() => setShowLoginModal(true)}
                   className="w-8 h-8 bg-black border-2 border-black flex items-center justify-center text-white font-black text-xs hover:bg-gray-800 transition-colors"
                 >
-                  🔓
+                  <User size={16} strokeWidth={2.5} />
                 </button>
                 <button
                   onClick={() => setShowLoginModal(true)}
-                  className="text-xs font-bold text-black uppercase hover:bg-gray-100 px-2 py-1 border-2 border-black transition-colors"
+                  className="flex items-center gap-1 text-xs font-bold text-black uppercase hover:bg-gray-100 px-2 py-1 border-2 border-black transition-colors"
                 >
+                  <LogOut size={14} strokeWidth={2.5} className="rotate-180" />
                   LOGIN
                 </button>
               </>
@@ -144,20 +153,23 @@ const Navbar: React.FC = () => {
         {/* Mobile Navigation (Hidden by default) */}
         <div className="md:hidden border-t-2 border-black py-4">
           <div className="space-y-2">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`flex items-center space-x-3 px-4 py-3 text-sm font-black uppercase tracking-wide transition-all duration-200 border-2 ${
-                  isActive(link.path)
-                    ? 'bg-black text-white border-black'
-                    : 'text-black border-transparent hover:bg-gray-100 hover:border-black'
-                }`}
-              >
-                <span className="text-lg">{link.icon}</span>
-                <span>{link.label}</span>
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const IconComponent = link.icon;
+              return (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`flex items-center space-x-3 px-4 py-3 text-sm font-black uppercase tracking-wide transition-all duration-200 border-2 ${
+                    isActive(link.path)
+                      ? 'bg-black text-white border-black'
+                      : 'text-black border-transparent hover:bg-gray-100 hover:border-black'
+                  }`}
+                >
+                  <IconComponent size={20} strokeWidth={2.5} />
+                  <span>{link.label}</span>
+                </Link>
+              );
+            })}
             
             {/* Mobile User Section */}
             <div className="border-t-2 border-black pt-4 mt-4">
@@ -165,23 +177,26 @@ const Navbar: React.FC = () => {
                 <div className="px-4 space-y-2">
                   <button
                     onClick={() => setShowProfileModal(true)}
-                    className="w-full text-left px-4 py-3 text-sm font-black uppercase text-black border-2 border-black hover:bg-gray-100 transition-colors"
+                    className="w-full flex items-center gap-2 px-4 py-3 text-sm font-black uppercase text-black border-2 border-black hover:bg-gray-100 transition-colors"
                   >
-                    👤 Welcome, {user.username} - VIEW PROFILE
+                    <User size={18} strokeWidth={2.5} />
+                    Welcome, {user.username} - VIEW PROFILE
                   </button>
                   <button
                     onClick={logout}
-                    className="w-full text-left px-4 py-3 text-sm font-black uppercase text-black border-2 border-black hover:bg-gray-100 transition-colors"
+                    className="w-full flex items-center gap-2 px-4 py-3 text-sm font-black uppercase text-black border-2 border-black hover:bg-gray-100 transition-colors"
                   >
-                    🔓 LOGOUT
+                    <LogOut size={18} strokeWidth={2.5} />
+                    LOGOUT
                   </button>
                 </div>
               ) : (
                 <button
                   onClick={() => setShowLoginModal(true)}
-                  className="w-full text-left px-4 py-3 text-sm font-black uppercase text-black border-2 border-black hover:bg-gray-100 transition-colors"
+                  className="w-full flex items-center gap-2 px-4 py-3 text-sm font-black uppercase text-black border-2 border-black hover:bg-gray-100 transition-colors"
                 >
-                  🔓 LOGIN / REGISTER
+                  <LogOut size={18} strokeWidth={2.5} className="rotate-180" />
+                  LOGIN / REGISTER
                 </button>
               )}
             </div>

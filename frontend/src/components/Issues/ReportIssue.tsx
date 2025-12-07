@@ -143,7 +143,7 @@ const ReportIssue: React.FC = () => {
   if (submitResult?.success) {
     const issue = submitResult.data;
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
         <div className="max-w-2xl w-full">
           <div className="card text-center bg-white">
             <div className="text-6xl mb-4">✅</div>
