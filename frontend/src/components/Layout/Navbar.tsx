@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import LoginModal from '../Auth/LoginModal';
 import ProfileModal from '../Auth/ProfileModal';
-import { Home, Radio, Flag, FileText, BarChart3, Shield, Briefcase, User, LogOut, Menu, Newspaper } from 'lucide-react';
+import { Home, Radio, Flag, FileText, BarChart3, Shield, Briefcase, User, LogOut, Menu, Newspaper, Microscope } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const location = useLocation();
@@ -25,6 +25,7 @@ const Navbar: React.FC = () => {
   const commonLinks = [
     { path: '/analytics', label: 'ANALYTICS', icon: BarChart3 },
     { path: '/verify', label: userRole === 'admin' ? 'FACTS REPORTED' : 'FACT CHECK', icon: Shield },
+    { path: '/advanced-verification', label: 'ADVANCED VERIFY', icon: Microscope },
     { path: '/policy', label: 'POLICY DESK', icon: Briefcase },
   ];
 

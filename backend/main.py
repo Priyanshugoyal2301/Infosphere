@@ -71,6 +71,13 @@ except ImportError as e:
     print(f"Warning: Verification router not available: {e}")
     verification_available = False
 
+try:
+    from api.v1.endpoints.enhanced_verification import router as enhanced_verification_router
+    enhanced_verification_available = True
+except ImportError as e:
+    print(f"Warning: Enhanced verification router not available: {e}")
+    enhanced_verification_available = False
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan events"""
@@ -388,6 +395,10 @@ if core_routers_available:
 if verification_available:
     app.include_router(verification_router, prefix="/api/v1/verification")
     print("📊 Verification API endpoints registered at /api/v1/verification/*")
+
+if enhanced_verification_available:
+    app.include_router(enhanced_verification_router, prefix="/api/v1/enhanced-verification")
+    print("🔬 Enhanced Verification API endpoints registered at /api/v1/enhanced-verification/*")
 
 # Remove old mock endpoints; real routers are now mounted.
 # News endpoints are now provided by the news_router

@@ -13,6 +13,7 @@ import EnhancedMediaVerification from './components/Media/EnhancedMediaVerificat
 import PolicyDashboard from './components/Policy/PolicyDashboard';
 import RealTimeNews from './components/News/RealTimeNews';
 import FlaggedNews from './components/News/FlaggedNews';
+import AdvancedVerificationDashboard from './components/Verification/AdvancedVerificationDashboard';
 import './App.css';
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
               <Route path="/policy" element={<PolicyDashboard />} />
               <Route path="/news" element={<RealTimeNews />} />
               <Route path="/flagged-news" element={<FlaggedNews />} />
+              <Route path="/advanced-verification" element={<AdvancedVerificationDashboard />} />
             </Routes>
           </main>
           <Footer />

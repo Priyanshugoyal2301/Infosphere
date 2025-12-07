@@ -4,6 +4,7 @@ import api from '../../utils/api';
 import NewspaperBorders from '../Layout/NewspaperBorders';
 import { ENABLE_NEWSPAPER_BORDERS } from '../../utils/newspaperBorders';
 import LoginModal from '../Auth/LoginModal';
+import { CheckCircle } from 'lucide-react';
 
 interface ComplaintFormData {
   title: string;
@@ -146,7 +147,9 @@ const ReportIssue: React.FC = () => {
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
         <div className="max-w-2xl w-full">
           <div className="card text-center bg-white">
-            <div className="text-6xl mb-4">✅</div>
+            <div className="flex justify-center mb-4">
+              <CheckCircle size={80} strokeWidth={2} className="text-green-600" />
+            </div>
             <h2 className="text-2xl font-bold text-green-600 mb-4">Issue Submitted Successfully!</h2>
           
           <div className="border border-gray-300 rounded-lg p-6 mb-6" style={{background: '#f5f0e8'}}>
