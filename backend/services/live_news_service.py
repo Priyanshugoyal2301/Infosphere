@@ -11,6 +11,8 @@ from datetime import datetime, timedelta
 from typing import List, Dict, Optional
 from dotenv import load_dotenv
 import asyncio
+import re
+from bs4 import BeautifulSoup
 
 load_dotenv()
 
@@ -177,6 +179,55 @@ class LiveNewsService:
             else:
                 raise Exception(f"GNews error: {response.status_code}")
     
+    async def _scrape_article_date(self, url: str) -> Optional[str]:
+        """Scrape the publication date from an article URL"""
+        try:
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                response = await client.get(url, follow_redirects=True)
+                if response.status_code != 200:
+                    return None
+                
+                soup = BeautifulSoup(response.text, 'html.parser')
+                
+                # Try multiple common date meta tags
+                date_patterns = [
+                    ('meta', {'property': 'article:published_time'}),
+                    ('meta', {'name': 'pubdate'}),
+                    ('meta', {'name': 'publishdate'}),
+                    ('meta', {'name': 'date'}),
+                    ('meta', {'property': 'og:published_time'}),
+                    ('time', {'datetime': True}),
+                    ('time', {'pubdate': True}),
+                ]
+                
+                for tag, attrs in date_patterns:
+                    element = soup.find(tag, attrs)
+                    if element:
+                        date_str = element.get('content') or element.get('datetime')
+                        if date_str:
+                            try:
+                                # Parse and return ISO format
+                                parsed_date = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+                                return parsed_date.isoformat()
+                            except:
+                                pass
+                
+                # Try to find date in common HTML patterns
+                date_regex = r'(\d{4}-\d{2}-\d{2})'
+                text_content = soup.get_text()[:1000]  # First 1000 chars
+                match = re.search(date_regex, text_content)
+                if match:
+                    try:
+                        date = datetime.strptime(match.group(1), '%Y-%m-%d')
+                        return date.isoformat()
+                    except:
+                        pass
+                
+                return None
+        except Exception as e:
+            print(f"[SCRAPE] Failed to scrape date from {url}: {e}")
+            return None
+    
     async def _fetch_from_newsdata(self, category: Optional[str], limit: int) -> List[Dict]:
         """Fetch from NewsData.io"""
         params = {
@@ -198,13 +249,20 @@ class LiveNewsService:
             else:
                 raise Exception(f"NewsData error: {response.status_code}")
     
-    def _process_newsapi_articles(self, articles: List[Dict]) -> List[Dict]:
-        """Process NewsAPI articles to standard format"""
+    async def _process_newsapi_articles_async(self, articles: List[Dict]) -> List[Dict]:
+        """Process NewsAPI articles to standard format with date scraping"""
         processed = []
         
         for article in articles:
             if not article.get("title") or article.get("title") == "[Removed]":
                 continue
+            
+            # Get published date, scrape if missing
+            published_at = article.get("publishedAt")
+            if not published_at or published_at == "N/A":
+                published_at = await self._scrape_article_date(article["url"])
+            if not published_at:
+                published_at = datetime.now().isoformat()
                 
             processed.append({
                 "id": hash(article["url"]),
@@ -214,21 +272,32 @@ class LiveNewsService:
                 "url": article["url"],
                 "source": article["source"]["name"],
                 "author": article.get("author") or "Unknown",
-                "published_at": article["publishedAt"],
+                "published_at": published_at,
                 "image_url": article.get("urlToImage"),
                 "category": self._auto_categorize(article["title"], article.get("description", "")),
                 "sentiment": "neutral",
                 "confidence": round(random.uniform(0.90, 0.95), 2),
-                "api_source": "NewsData"
+                "api_source": "NewsAPI"
             })
         
         return processed
     
-    def _process_gnews_articles(self, articles: List[Dict]) -> List[Dict]:
-        """Process GNews articles to standard format"""
+    def _process_newsapi_articles(self, articles: List[Dict]) -> List[Dict]:
+        """Synchronous wrapper for backward compatibility"""
+        return asyncio.run(self._process_newsapi_articles_async(articles))
+    
+    async def _process_gnews_articles_async(self, articles: List[Dict]) -> List[Dict]:
+        """Process GNews articles to standard format with date scraping"""
         processed = []
         
         for article in articles:
+            # Get published date, scrape if missing
+            published_at = article.get("publishedAt")
+            if not published_at or published_at == "N/A":
+                published_at = await self._scrape_article_date(article["url"])
+            if not published_at:
+                published_at = datetime.now().isoformat()
+            
             processed.append({
                 "id": hash(article["url"]),
                 "title": article["title"],
@@ -237,7 +306,7 @@ class LiveNewsService:
                 "url": article["url"],
                 "source": article["source"]["name"],
                 "author": "Unknown",
-                "published_at": article["publishedAt"],
+                "published_at": published_at,
                 "image_url": article.get("image"),
                 "category": self._auto_categorize(article["title"], article.get("description", "")),
                 "sentiment": "neutral",
@@ -247,11 +316,24 @@ class LiveNewsService:
         
         return processed
     
-    def _process_newsdata_articles(self, articles: List[Dict]) -> List[Dict]:
-        """Process NewsData articles to standard format"""
+    def _process_gnews_articles(self, articles: List[Dict]) -> List[Dict]:
+        """Synchronous wrapper for backward compatibility"""
+        return asyncio.run(self._process_gnews_articles_async(articles))
+    
+    async def _process_newsdata_articles_async(self, articles: List[Dict]) -> List[Dict]:
+        """Process NewsData articles to standard format with date scraping"""
         processed = []
         
         for article in articles:
+            # Get published date, scrape if missing
+            published_at = article.get("pubDate")
+            if not published_at or published_at == "N/A":
+                url = article.get("link", "")
+                if url:
+                    published_at = await self._scrape_article_date(url)
+            if not published_at:
+                published_at = datetime.now().isoformat()
+            
             processed.append({
                 "id": hash(article.get("link", str(hash(article["title"])))),
                 "title": article["title"],
@@ -260,7 +342,7 @@ class LiveNewsService:
                 "url": article.get("link", ""),
                 "source": article.get("source_id", "Unknown"),
                 "author": ", ".join(article.get("creator", [])) if article.get("creator") else "Unknown",
-                "published_at": article.get("pubDate", datetime.now().isoformat()),
+                "published_at": published_at,
                 "image_url": article.get("image_url"),
                 "category": article.get("category", [None])[0] or self._auto_categorize(article["title"], article.get("description", "")),
                 "sentiment": "neutral",
@@ -269,6 +351,10 @@ class LiveNewsService:
             })
         
         return processed
+    
+    def _process_newsdata_articles(self, articles: List[Dict]) -> List[Dict]:
+        """Synchronous wrapper for backward compatibility"""
+        return asyncio.run(self._process_newsdata_articles_async(articles))
     
     def _auto_categorize(self, title: str, description: str) -> str:
         """Auto-categorize article based on content"""
