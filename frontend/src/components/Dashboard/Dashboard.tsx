@@ -296,7 +296,7 @@ Sources: Times of India RSS, NDTV Live Feed, Indian Express API...`);
           </div>
         </div>
         <div className="mt-4">
-          <p className="newspaper-subtitle text-lg font-semibold text-black max-w-3xl mx-auto italic">
+          <p className="newspaper-subtitle text-lg font-semibold text-black max-w-5xl mx-auto italic">
             "AI-Powered Truth in the Digital Age - Your Trusted Source for Civic Intelligence"
           </p>
         </div>

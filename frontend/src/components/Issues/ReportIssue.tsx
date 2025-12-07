@@ -199,7 +199,7 @@ const ReportIssue: React.FC = () => {
         ['--page-bg-image' as any]: "url('/images/newspaper-pattern.svg')"
       }}
     >
-      <div className="max-w-7xl mx-auto px-4 md:px-10 relative z-[1]">
+      <div className="max-w-[1600px] mx-auto px-6 md:px-12 relative z-[1]">
         {ENABLE_NEWSPAPER_BORDERS && <NewspaperBorders />}
         <div className="newspaper-header text-center py-6 mb-4">
           <div className="border-t-4 border-b-4 border-black py-3 mx-0">

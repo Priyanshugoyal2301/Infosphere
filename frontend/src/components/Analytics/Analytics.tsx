@@ -162,7 +162,7 @@ const Analytics: React.FC = () => {
     <>
       {ENABLE_NEWSPAPER_BORDERS && <NewspaperBorders />}
       <div className={`enhanced-typography newspaper-bg ${ENABLE_NEWSPAPER_BORDERS ? 'pt-4 pb-4 pl-4 pr-4' : 'py-4'}`}>
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-[1600px] mx-auto px-4">
           {/* Newspaper Header */}
           <div className="newspaper-header text-center py-4 mb-4">
             <div className="border-t-4 border-b-4 border-black py-4 mx-4">

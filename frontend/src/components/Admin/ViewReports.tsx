@@ -114,7 +114,7 @@ const ViewReports: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-[1600px] mx-auto px-4">
       {/* Newspaper Header */}
       <div className="border-4 border-black bg-white mb-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
         <div className="bg-black text-white p-6 text-center">

@@ -86,7 +86,7 @@ const FlaggedNews: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-[1600px] mx-auto px-6 py-8">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
           <p className="mt-4 text-gray-600">Loading flagged news...</p>
@@ -97,7 +97,7 @@ const FlaggedNews: React.FC = () => {
 
   if (error) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-[1600px] mx-auto px-6 py-8">
         <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
           <p className="text-red-800">{error}</p>
           <button
@@ -112,7 +112,7 @@ const FlaggedNews: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-[1600px] mx-auto px-6 py-8">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-gray-900 mb-2">

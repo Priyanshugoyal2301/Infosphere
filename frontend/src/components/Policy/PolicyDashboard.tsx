@@ -191,7 +191,7 @@ const PolicyDashboard: React.FC = () => {
     <>
       {ENABLE_NEWSPAPER_BORDERS && <NewspaperBorders />}
       <div className={`enhanced-typography policy-container ${ENABLE_NEWSPAPER_BORDERS ? 'pt-10 pb-10 pl-8 pr-8' : ''}`}>
-        <div className="max-w-6xl mx-auto px-4">
+        <div className="max-w-[1400px] mx-auto px-6">
         <div className="policy-header">
           <div className="border-t-4 border-b-4 border-black py-4 mx-4">
             <h1 className="bold-title policy-title">
