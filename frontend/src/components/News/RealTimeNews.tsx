@@ -1166,13 +1166,71 @@ const RealTimeNews: React.FC = () => {
                           🔗 READ FULL
                         </a>
                         <button
-                          onClick={() => openReaderMode({
-                            title: article.title,
-                            content: article.content,
-                            source: article.source,
-                            published_date: article.published_date,
-                            url: article.url
-                          })}
+                          onClick={async () => {
+                            if (article.url) {
+                              try {
+                                // Show loading state
+                                const btn = document.activeElement as HTMLButtonElement;
+                                const originalText = btn.textContent;
+                                btn.textContent = '⏳ LOADING...';
+                                btn.disabled = true;
+                                
+                                // Scrape full article content
+                                const response = await fetch(
+                                  `http://localhost:8000/api/v1/news/scrape-article?url=${encodeURIComponent(article.url)}`
+                                );
+                                
+                                if (response.ok) {
+                                  const data = await response.json();
+                                  const scrapedArticle = data.article;
+                                  
+                                  // Open reader mode with full scraped content
+                                  openReaderMode({
+                                    title: scrapedArticle.title || article.title,
+                                    content: scrapedArticle.content || article.content,
+                                    source: scrapedArticle.source || article.source,
+                                    published_date: scrapedArticle.published_date || article.published_date,
+                                    url: article.url,
+                                    author: scrapedArticle.author,
+                                    image_url: scrapedArticle.image_url
+                                  });
+                                } else {
+                                  // Fallback to original content if scraping fails
+                                  console.warn('Scraping failed, using original content');
+                                  openReaderMode({
+                                    title: article.title,
+                                    content: article.content,
+                                    source: article.source,
+                                    published_date: article.published_date,
+                                    url: article.url
+                                  });
+                                }
+                                
+                                // Restore button state
+                                btn.textContent = originalText;
+                                btn.disabled = false;
+                              } catch (error) {
+                                console.error('Error scraping article:', error);
+                                // Fallback to original content
+                                openReaderMode({
+                                  title: article.title,
+                                  content: article.content,
+                                  source: article.source,
+                                  published_date: article.published_date,
+                                  url: article.url
+                                });
+                              }
+                            } else {
+                              // No URL, use original content
+                              openReaderMode({
+                                title: article.title,
+                                content: article.content,
+                                source: article.source,
+                                published_date: article.published_date,
+                                url: article.url
+                              });
+                            }
+                          }}
                           className="bg-blue-600 text-white font-black py-1 px-3 text-xs uppercase tracking-wide hover:bg-blue-700 transition-colors inline-block"
                         >
                           📖 READER MODE

@@ -10,6 +10,8 @@ interface ReaderModeProps {
     source: string;
     published_date?: string;
     url?: string;
+    author?: string;
+    image_url?: string;
   };
 }
 
@@ -359,6 +361,12 @@ const ReaderMode: React.FC<ReaderModeProps> = ({ isOpen, onClose, article }) => 
                   </h1>
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm opacity-75">
                     <span className="font-semibold">{article.source}</span>
+                    {article.author && (
+                      <>
+                        <span className="hidden sm:inline">•</span>
+                        <span>By {article.author}</span>
+                      </>
+                    )}
                     {article.published_date && (
                       <>
                         <span className="hidden sm:inline">•</span>
@@ -371,6 +379,21 @@ const ReaderMode: React.FC<ReaderModeProps> = ({ isOpen, onClose, article }) => 
                     )}
                   </div>
                 </div>
+
+                {/* Featured Image */}
+                {article.image_url && (
+                  <div className="my-6">
+                    <img 
+                      src={article.image_url} 
+                      alt={article.title}
+                      className="w-full h-auto rounded-lg shadow-lg"
+                      onError={(e) => {
+                        // Hide image if it fails to load
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
 
                 {/* Article Content */}
                 <div 

@@ -6,6 +6,8 @@ interface Article {
   source: string;
   published_date?: string;
   url?: string;
+  author?: string;
+  image_url?: string;
 }
 
 interface ReaderContextType {

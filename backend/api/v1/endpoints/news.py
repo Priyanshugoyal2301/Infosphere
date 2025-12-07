@@ -23,6 +23,18 @@ from fastapi import APIRouter, HTTPException, Query, BackgroundTasks
 from pydantic import BaseModel
 import pandas as pd
 
+# Import article scraper service
+try:
+    from services.article_scraper_service import get_article_scraper
+    SCRAPER_ENABLED = True
+except ImportError:
+    try:
+        from backend.services.article_scraper_service import get_article_scraper
+        SCRAPER_ENABLED = True
+    except ImportError:
+        SCRAPER_ENABLED = False
+        print("Warning: Article scraper service not available")
+
 # Import live news service
 try:
     # Try relative import first (for deployed environment)
@@ -1228,7 +1240,44 @@ def setup_news_routes(app):
             
         except Exception as e:
             print(f"Warning: News system initialization warning: {e}")
+
+
+@router.post("/scrape-article")
+async def scrape_full_article(url: str = Query(..., description="Article URL to scrape")):
+    """
+    Scrape full article content from URL for Reader Mode.
     
+    Returns the complete article including title, content, author, date, and image.
+    """
+    try:
+        if not SCRAPER_ENABLED:
+            raise HTTPException(status_code=503, detail="Article scraper service not available")
+        
+        if not url:
+            raise HTTPException(status_code=400, detail="Article URL is required")
+        
+        # Get scraper instance
+        scraper = get_article_scraper()
+        
+        # Scrape the article
+        article_data = await scraper.scrape_article(url)
+        
+        # Check for errors
+        if "error" in article_data:
+            raise HTTPException(status_code=500, detail=article_data["error"])
+        
+        return {
+            "success": True,
+            "article": article_data,
+            "timestamp": datetime.now().isoformat()
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to scrape article: {str(e)}")
+    
+
     @app.on_event("shutdown")
     async def shutdown_news_system():
         """Cleanup on shutdown."""
