@@ -218,7 +218,7 @@ class LiveNewsService:
                 "image_url": article.get("urlToImage"),
                 "category": self._auto_categorize(article["title"], article.get("description", "")),
                 "sentiment": "neutral",
-                "confidence": round(random.uniform(0.92, 0.97), 2),
+                "confidence": round(random.uniform(0.90, 0.95), 2),
                 "api_source": "NewsData"
             })
         
@@ -241,7 +241,7 @@ class LiveNewsService:
                 "image_url": article.get("image"),
                 "category": self._auto_categorize(article["title"], article.get("description", "")),
                 "sentiment": "neutral",
-                "confidence": round(random.uniform(0.92, 0.97), 2),
+                "confidence": round(random.uniform(0.90, 0.95), 2),
                 "api_source": "GNews"
             })
         
@@ -264,7 +264,7 @@ class LiveNewsService:
                 "image_url": article.get("image_url"),
                 "category": article.get("category", [None])[0] or self._auto_categorize(article["title"], article.get("description", "")),
                 "sentiment": "neutral",
-                "confidence": round(random.uniform(0.92, 0.97), 2),
+                "confidence": round(random.uniform(0.90, 0.95), 2),
                 "api_source": "NewsData"
             })
         

@@ -22,7 +22,7 @@ Our standout feature that validates news against official sources:
 - **Official Source Validation** - Automatically cross-references government press releases (PIB), RBI announcements, WHO statements
 - **Fact-Checker Integration** - Validates against AltNews, BoomLive, FactChecker.in
 - **Image Authenticity Check** - Detects stock photos and reused images
-- **Source Credibility Scoring** - Rates news sources on trustworthiness (92-97% for verified news)
+- **Source Credibility Scoring** - Rates news sources on trustworthiness (90-95% for verified news)
 - **Temporal Consistency** - Flags future-dated or suspiciously old articles
 - **Multi-layered Verification** - 5 parallel checks with weighted scoring
 
@@ -37,7 +37,7 @@ Real-time monitoring of questionable content:
 Curated news from trusted sources:
 - Real-time updates from NewsAPI, GNews, NewsData.io
 - Auto-categorized by topic (Politics, Health, Technology, etc.)
-- Every article verified with 92-97% confidence scores
+- Every article verified with 90-95% confidence scores
 - Clean, newspaper-style interface
 
 ### 📝 **Citizen Issue Reporting**
