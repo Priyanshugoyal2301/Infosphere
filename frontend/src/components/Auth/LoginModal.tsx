@@ -127,8 +127,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, initialMode = 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full border-4 border-black">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4 overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-2xl max-w-md w-full border-4 border-black my-8 relative z-[10000]">
         {/* Header */}
         <div className="border-b-2 border-black p-4 bg-white">
           <div className="flex justify-between items-center">
