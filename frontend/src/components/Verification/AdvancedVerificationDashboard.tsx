@@ -26,10 +26,10 @@ const AdvancedVerificationDashboard: React.FC = () => {
 
   const fetchRecentNews = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/v1/news/articles?limit=10');
+      const response = await fetch('http://localhost:8000/api/v1/news/live-news?limit=50');
       const data = await response.json();
       
-      if (data.success) {
+      if (data.status === 'success') {
         setRecentNews(data.articles || []);
       }
     } catch (error) {

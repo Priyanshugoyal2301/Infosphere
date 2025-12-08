@@ -45,7 +45,7 @@ class LiveNewsService:
         
         # Cache settings
         self.cache_file = "news_cache_v2.json"  # Changed to v2 to force fresh fetch with new confidence values
-        cache_duration_minutes = int(os.getenv("NEWS_CACHE_DURATION", 120))
+        cache_duration_minutes = int(os.getenv("NEWS_CACHE_DURATION", 15))  # Reduced from 120 to 15 minutes
         self.cache_duration = timedelta(minutes=cache_duration_minutes)
         
         # API endpoints
@@ -53,7 +53,7 @@ class LiveNewsService:
         self.gnews_url = "https://gnews.io/api/v4/top-headlines"
         self.newsdata_url = "https://newsdata.io/api/1/news"
     
-    async def fetch_live_news(self, category: Optional[str] = None, limit: int = 50) -> List[Dict]:
+    async def fetch_live_news(self, category: Optional[str] = None, limit: int = 100) -> List[Dict]:
         """
         Fetch live news with automatic fallback between sources
         Priority: NewsAPI -> GNews -> NewsData -> Cache
@@ -114,6 +114,9 @@ class LiveNewsService:
             print("⚠️ All APIs failed, returning stale cache")
             return self._get_stale_cache(category)[:limit]
         
+        # Sort by published date (newest first) to ensure fresh content
+        news_articles.sort(key=lambda x: x.get("published_at", ""), reverse=True)
+        
         # Cache the results
         self._cache_news(news_articles, category)
         return news_articles[:limit]
@@ -123,7 +126,7 @@ class LiveNewsService:
         params = {
             "apiKey": self.newsapi_key,
             "country": "in",
-            "pageSize": min(limit, 100)
+            "pageSize": min(limit, 100)  # Max 100 per request
         }
         
         if category and category != "all":
@@ -451,7 +454,7 @@ class LiveNewsService:
     
     async def get_breaking_news(self, limit: int = 10) -> List[Dict]:
         """Get top breaking news"""
-        all_news = await self.fetch_live_news(category=None, limit=limit * 2)
+        all_news = await self.fetch_live_news(category=None, limit=limit * 3)  # Fetch 3x to ensure variety
         
         # Sort by publish date (newest first)
         all_news.sort(key=lambda x: x.get("published_at", ""), reverse=True)
