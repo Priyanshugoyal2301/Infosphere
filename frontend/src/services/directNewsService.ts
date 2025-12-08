@@ -7,6 +7,9 @@ const NEWS_API_KEY = 'b9332a9838474c4e9f42521e4b2bb197';
 const GNEWS_API_KEY = 'eda407cf5b208678dcba2187d0ad083c';
 const NEWSDATA_API_KEY = 'pub_6212126cd950424e9655636edc039ad9';
 
+// CORS proxy for browsers (only use in development/client-side)
+const CORS_PROXY = 'https://corsproxy.io/?';
+
 interface DirectNewsArticle {
   id?: number;
   title: string;
@@ -27,21 +30,26 @@ interface DirectNewsArticle {
 async function fetchFromNewsAPI(category: string = 'general', limit: number = 50): Promise<DirectNewsArticle[]> {
   try {
     const country = 'us';
-    const url = `https://newsapi.org/v2/top-headlines?country=${country}&category=${category}&pageSize=${limit}&apiKey=${NEWS_API_KEY}`;
+    const apiUrl = `https://newsapi.org/v2/top-headlines?country=${country}&category=${category}&pageSize=${limit}&apiKey=${NEWS_API_KEY}`;
+    const url = CORS_PROXY + encodeURIComponent(apiUrl);
     
     console.log('📰 Fetching from NewsAPI...');
     const response = await fetch(url);
     
     if (!response.ok) {
+      console.error(`NewsAPI HTTP error: ${response.status}`);
       throw new Error(`NewsAPI error: ${response.status}`);
     }
     
     const data = await response.json();
+    console.log('NewsAPI response:', data);
     
     if (data.status !== 'ok' || !data.articles) {
+      console.error('Invalid NewsAPI response:', data);
       throw new Error('Invalid NewsAPI response');
     }
     
+    console.log(`✅ NewsAPI returned ${data.articles.length} articles`);
     return data.articles.map((article: any) => ({
       title: article.title || 'No title',
       content: article.description || article.content || 'No content available',
@@ -63,21 +71,26 @@ async function fetchFromNewsAPI(category: string = 'general', limit: number = 50
  */
 async function fetchFromGNews(category: string = 'general', limit: number = 50): Promise<DirectNewsArticle[]> {
   try {
-    const url = `https://gnews.io/api/v4/top-headlines?category=${category}&lang=en&max=${limit}&apikey=${GNEWS_API_KEY}`;
+    const apiUrl = `https://gnews.io/api/v4/top-headlines?category=${category}&lang=en&max=${limit}&apikey=${GNEWS_API_KEY}`;
+    const url = CORS_PROXY + encodeURIComponent(apiUrl);
     
     console.log('📰 Fetching from GNews...');
     const response = await fetch(url);
     
     if (!response.ok) {
+      console.error(`GNews HTTP error: ${response.status}`);
       throw new Error(`GNews error: ${response.status}`);
     }
     
     const data = await response.json();
+    console.log('GNews response:', data);
     
     if (!data.articles) {
+      console.error('Invalid GNews response:', data);
       throw new Error('Invalid GNews response');
     }
     
+    console.log(`✅ GNews returned ${data.articles.length} articles`);
     return data.articles.map((article: any) => ({
       title: article.title || 'No title',
       content: article.description || article.content || 'No content available',
@@ -163,12 +176,19 @@ export async function fetchDirectNews(category: string = 'all', limit: number = 
     fetchFromNewsData(categories.newsdata, Math.floor(limit / 3))
   ]);
   
+  console.log(`Fetched: NewsAPI=${newsApiArticles.length}, GNews=${gnewsArticles.length}, NewsData=${newsdataArticles.length}`);
+  
   // Combine all articles
   const allArticles = [
     ...newsApiArticles,
     ...gnewsArticles,
     ...newsdataArticles
   ];
+  
+  if (allArticles.length === 0) {
+    console.error('❌ All API sources failed to return articles');
+    throw new Error('No articles available from any source');
+  }
   
   // Remove duplicates based on title similarity
   const uniqueArticles = removeDuplicates(allArticles);
