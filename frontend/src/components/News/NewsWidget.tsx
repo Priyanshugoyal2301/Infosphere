@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { fetchAllNews } from '../../services/newsApiService';
 import './NewsWidget.css';
 
 interface NewsArticle {
@@ -104,16 +105,15 @@ const NewsWidget: React.FC<NewsWidgetProps> = ({
   const fetchLatestNews = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/live-news?limit=${limit * 5}`);
-      if (!response.ok) throw new Error('Backend not available');
+      console.log('🔍 NewsWidget: Fetching from APIs...');
       
-      const data = await response.json();
-      // Handle the response format from live-news API
-      const articles = data.articles || data || [];
+      const articles = await fetchAllNews();
+      
       // Filter to only verified items (>= 75%) and limit results
       const filtered = (articles as NewsArticle[]).filter(a => getConfidence(a) >= 0.75);
       setArticles(filtered.slice(0, limit));
       setError(null);
+      console.log(`✅ NewsWidget: Loaded ${filtered.slice(0, limit).length} articles`);
     } catch (err) {
       console.log('Backend not available, using mock news data for widget');
       // Use mock data when backend is not available

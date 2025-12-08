@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useReader } from '../../contexts/ReaderContext';
 import NewspaperBorders from '../Layout/NewspaperBorders';
 import { ENABLE_NEWSPAPER_BORDERS } from '../../utils/newspaperBorders';
+import { fetchAllNews, searchNews } from '../../services/newsApiService';
 import './RealTimeNews.css';
 
 interface NewsArticle {
@@ -251,31 +252,29 @@ const RealTimeNews: React.FC = () => {
   const fetchNews = useCallback(async (category: string = 'all', search: string = '') => {
     try {
       setLoading(true);
-      let url = `${API_BASE_URL}/live-news?limit=100`;
       
-      if (category !== 'all') {
-        url += `&category=${encodeURIComponent(category)}`;
-      }
+      console.log('🔍 Fetching live news from APIs...');
       
+      let articles;
       if (search) {
-        // Use search endpoint for text queries
-        url = `${API_BASE_URL}/search-live?query=${encodeURIComponent(search)}&limit=50`;
-      }
-
-      console.log('🔍 Fetching live news from:', url);
-      const response = await fetch(url);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        // Search across all APIs
+        articles = await searchNews(search);
+      } else {
+        // Fetch all latest news
+        articles = await fetchAllNews();
       }
       
-      const data = await response.json();
-      const articles = search ? (data.results || data.articles || []) : (data.articles || []);
+      // Filter by category if needed
+      if (category !== 'all') {
+        articles = articles.filter(article => 
+          article.category?.toLowerCase() === category.toLowerCase()
+        );
+      }
       
       setArticles(articles);
       setError(null);
-      setServiceStatus('🟢 LIVE NEWS API ACTIVE');
-      console.log(`✅ Successfully loaded ${articles.length} articles from live news APIs`);
+      setServiceStatus(`🟢 LIVE - ${articles.length} Articles from 3 APIs`);
+      console.log(`✅ Successfully loaded ${articles.length} articles from news APIs`);
       
     } catch (err) {
       console.warn('⚠️ Live news API not available, using mock data:', err);
