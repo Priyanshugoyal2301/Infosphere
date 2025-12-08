@@ -388,12 +388,12 @@ async def debug_info():
 @router.get("/live-news")
 async def get_live_news(
     category: Optional[str] = Query(None, description="Filter by category (politics, sports, technology, business, etc.)"),
-    limit: int = Query(50, description="Maximum number of articles to return")
+    limit: int = Query(100, description="Maximum number of articles to return")
 ):
     """
     Get live news from NewsAPI, GNews, and NewsData.io with automatic fallback.
     
-    This endpoint fetches real-time news from multiple sources with 2-hour caching.
+    This endpoint fetches real-time news from multiple sources with 15-minute caching.
     """
     try:
         if not LIVE_NEWS_ENABLED:
@@ -413,7 +413,7 @@ async def get_live_news(
             "status": "success",
             "total": len(articles),
             "articles": articles,
-            "cache_duration_minutes": 120,
+            "cache_duration_minutes": 15,
             "last_updated": datetime.now().isoformat()
         }
         
@@ -427,7 +427,7 @@ async def get_live_news(
 
 
 @router.get("/breaking-news")
-async def get_breaking_news(limit: int = Query(10, description="Number of breaking news articles")):
+async def get_breaking_news(limit: int = Query(20, description="Number of breaking news articles")):
     """
     Get top breaking news articles sorted by recency.
     """

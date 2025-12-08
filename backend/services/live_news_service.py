@@ -44,16 +44,36 @@ class LiveNewsService:
         print(f"[INIT] Loaded API Keys: NewsAPI={bool(self.newsapi_key)}, GNews={bool(self.gnews_key)}, NewsData={bool(self.newsdata_key)}")
         
         # Cache settings
-        self.cache_file = "news_cache_v2.json"  # Changed to v2 to force fresh fetch with new confidence values
-        cache_duration_minutes = int(os.getenv("NEWS_CACHE_DURATION", 120))
+        self.cache_version = "v3"  # Increment this to invalidate all old caches
+        self.cache_file = f"news_cache_{self.cache_version}.json"
+        cache_duration_minutes = int(os.getenv("NEWS_CACHE_DURATION", 10))  # 10 minutes
         self.cache_duration = timedelta(minutes=cache_duration_minutes)
+        
+        # Clean up old cache files on startup
+        self._cleanup_old_caches()
         
         # API endpoints
         self.newsapi_url = "https://newsapi.org/v2/top-headlines"
-        self.gnews_url = "https://gnews.io/api/v4/top-headlines"
+        self.gnews_url = "https://gnews.io/api/v4/top-headlines"  # Changed from search to top-headlines
         self.newsdata_url = "https://newsdata.io/api/1/news"
     
-    async def fetch_live_news(self, category: Optional[str] = None, limit: int = 50) -> List[Dict]:
+    def _cleanup_old_caches(self):
+        """Remove old cache files from previous versions"""
+        try:
+            import glob
+            import os
+            cache_pattern = "news_cache_*.json"
+            for cache_file in glob.glob(cache_pattern):
+                if cache_file != self.cache_file:
+                    try:
+                        os.remove(cache_file)
+                        print(f"🗑️  Removed old cache file: {cache_file}")
+                    except Exception as e:
+                        print(f"⚠️  Could not remove {cache_file}: {e}")
+        except Exception as e:
+            print(f"⚠️  Cache cleanup failed: {e}")
+    
+    async def fetch_live_news(self, category: Optional[str] = None, limit: int = 100) -> List[Dict]:
         """
         Fetch live news with automatic fallback between sources
         Priority: NewsAPI -> GNews -> NewsData -> Cache
@@ -114,6 +134,9 @@ class LiveNewsService:
             print("⚠️ All APIs failed, returning stale cache")
             return self._get_stale_cache(category)[:limit]
         
+        # Sort by published date (newest first) to ensure fresh content
+        news_articles.sort(key=lambda x: x.get("published_at", ""), reverse=True)
+        
         # Cache the results
         self._cache_news(news_articles, category)
         return news_articles[:limit]
@@ -123,7 +146,7 @@ class LiveNewsService:
         params = {
             "apiKey": self.newsapi_key,
             "country": "in",
-            "pageSize": min(limit, 100)
+            "pageSize": min(limit, 100)  # Max 100 per request
         }
         
         if category and category != "all":
@@ -167,8 +190,20 @@ class LiveNewsService:
             "max": min(limit, 100)
         }
         
+        # GNews uses 'category' not 'topic' for top-headlines
         if category and category != "all":
-            params["topic"] = category.lower()
+            # Map to GNews category names
+            category_map = {
+                "general": "general",
+                "business": "business",
+                "entertainment": "entertainment",
+                "health": "health",
+                "science": "science",
+                "sports": "sports",
+                "technology": "technology"
+            }
+            gnews_category = category_map.get(category.lower(), "general")
+            params["category"] = gnews_category
         
         async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.get(self.gnews_url, params=params)
@@ -177,6 +212,8 @@ class LiveNewsService:
                 data = response.json()
                 return self._process_gnews_articles(data.get("articles", []))
             else:
+                error_text = response.text if hasattr(response, 'text') else str(response.status_code)
+                print(f"❌ GNews API Error: {response.status_code} - {error_text}")
                 raise Exception(f"GNews error: {response.status_code}")
     
     async def _scrape_article_date(self, url: str) -> Optional[str]:
@@ -398,7 +435,7 @@ class LiveNewsService:
             print(f"⚠️ Cache write failed: {str(e)}")
     
     def _get_cached_news(self, category: Optional[str] = None) -> Optional[List[Dict]]:
-        """Get cached news if still valid (within cache duration)"""
+        """Get cached news if still valid (within cache duration and from today)"""
         cache_key = category or "all"
         cache_data = self._load_cache()
         
@@ -406,8 +443,18 @@ class LiveNewsService:
             cached = cache_data[cache_key]
             timestamp = datetime.fromisoformat(cached["timestamp"])
             
-            if datetime.now() - timestamp < self.cache_duration:
+            # Check if cache is from today and within duration
+            now = datetime.now()
+            is_same_day = timestamp.date() == now.date()
+            is_within_duration = now - timestamp < self.cache_duration
+            
+            if is_same_day and is_within_duration:
+                print(f"📦 Using cache from {timestamp.strftime('%H:%M:%S')} (age: {int((now - timestamp).total_seconds() / 60)} min)")
                 return cached["articles"]
+            elif not is_same_day:
+                print(f"🗓️  Cache is from {timestamp.date()}, invalidating...")
+            else:
+                print(f"⏰ Cache expired (age: {int((now - timestamp).total_seconds() / 60)} min)")
         
         return None
     
@@ -451,7 +498,7 @@ class LiveNewsService:
     
     async def get_breaking_news(self, limit: int = 10) -> List[Dict]:
         """Get top breaking news"""
-        all_news = await self.fetch_live_news(category=None, limit=limit * 2)
+        all_news = await self.fetch_live_news(category=None, limit=limit * 3)  # Fetch 3x to ensure variety
         
         # Sort by publish date (newest first)
         all_news.sort(key=lambda x: x.get("published_at", ""), reverse=True)
