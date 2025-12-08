@@ -54,7 +54,7 @@ class LiveNewsService:
         
         # API endpoints
         self.newsapi_url = "https://newsapi.org/v2/top-headlines"
-        self.gnews_url = "https://gnews.io/api/v4/top-headlines"
+        self.gnews_url = "https://gnews.io/api/v4/top-headlines"  # Changed from search to top-headlines
         self.newsdata_url = "https://newsdata.io/api/1/news"
     
     def _cleanup_old_caches(self):
@@ -190,8 +190,20 @@ class LiveNewsService:
             "max": min(limit, 100)
         }
         
+        # GNews uses 'category' not 'topic' for top-headlines
         if category and category != "all":
-            params["topic"] = category.lower()
+            # Map to GNews category names
+            category_map = {
+                "general": "general",
+                "business": "business",
+                "entertainment": "entertainment",
+                "health": "health",
+                "science": "science",
+                "sports": "sports",
+                "technology": "technology"
+            }
+            gnews_category = category_map.get(category.lower(), "general")
+            params["category"] = gnews_category
         
         async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.get(self.gnews_url, params=params)
@@ -200,6 +212,8 @@ class LiveNewsService:
                 data = response.json()
                 return self._process_gnews_articles(data.get("articles", []))
             else:
+                error_text = response.text if hasattr(response, 'text') else str(response.status_code)
+                print(f"❌ GNews API Error: {response.status_code} - {error_text}")
                 raise Exception(f"GNews error: {response.status_code}")
     
     async def _scrape_article_date(self, url: str) -> Optional[str]:
