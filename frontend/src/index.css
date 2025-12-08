@@ -24,39 +24,56 @@
     min-height: 100vh;
     overflow-x: hidden;
     background: var(--old-paper);
-    background-image: 
-      /* Main torn paper texture */
-      radial-gradient(circle at 15% 20%, var(--paper-stain-medium) 0%, transparent 25%),
-      radial-gradient(circle at 85% 80%, var(--paper-stain-light) 0%, transparent 30%),
-      radial-gradient(circle at 45% 60%, var(--paper-stain-dark) 0%, transparent 20%),
-      radial-gradient(circle at 70% 15%, var(--paper-age-spot) 0%, transparent 15%),
-      radial-gradient(circle at 25% 85%, var(--paper-crease) 0%, transparent 18%),
-      /* Paper fiber texture */
-      repeating-linear-gradient(45deg, transparent 0px, rgba(192,168,130,0.08) 1px, transparent 2px),
-      repeating-linear-gradient(-45deg, transparent 0px, rgba(166,149,112,0.06) 1px, transparent 3px),
-      /* Age spots and stains */
-      radial-gradient(ellipse at 30% 40%, rgba(192,168,130,0.12) 0%, transparent 35%),
-      radial-gradient(ellipse at 80% 70%, rgba(212,193,160,0.1) 0%, transparent 40%),
-      radial-gradient(ellipse at 10% 10%, rgba(166,149,112,0.08) 0%, transparent 25%),
-      /* Subtle creases and folds */
-      linear-gradient(135deg, transparent 48%, rgba(192,168,130,0.04) 50%, transparent 52%),
-      linear-gradient(45deg, transparent 47%, rgba(166,149,112,0.05) 49%, transparent 51%);
-    background-size: 
-      200px 180px,
-      250px 220px,
-      180px 160px,
-      120px 100px,
-      160px 140px,
-      4px 4px,
-      6px 6px,
-      300px 250px,
-      350px 300px,
-      200px 180px,
-      100% 100%,
-      100% 100%;
-    background-attachment: fixed;
     color: var(--vintage-ink);
     position: relative;
+  }
+  
+  /* Simplified background for mobile performance */
+  @media (max-width: 768px) {
+    html, body {
+      background-image: 
+        radial-gradient(circle at 20% 30%, var(--paper-stain-light) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, var(--paper-stain-medium) 0%, transparent 35%);
+      background-size: 300px 300px, 400px 400px;
+      background-attachment: scroll;
+    }
+  }
+  
+  /* Full background effects for desktop */
+  @media (min-width: 769px) {
+    html, body {
+      background-image: 
+        /* Main torn paper texture */
+        radial-gradient(circle at 15% 20%, var(--paper-stain-medium) 0%, transparent 25%),
+        radial-gradient(circle at 85% 80%, var(--paper-stain-light) 0%, transparent 30%),
+        radial-gradient(circle at 45% 60%, var(--paper-stain-dark) 0%, transparent 20%),
+        radial-gradient(circle at 70% 15%, var(--paper-age-spot) 0%, transparent 15%),
+        radial-gradient(circle at 25% 85%, var(--paper-crease) 0%, transparent 18%),
+        /* Paper fiber texture */
+        repeating-linear-gradient(45deg, transparent 0px, rgba(192,168,130,0.08) 1px, transparent 2px),
+        repeating-linear-gradient(-45deg, transparent 0px, rgba(166,149,112,0.06) 1px, transparent 3px),
+        /* Age spots and stains */
+        radial-gradient(ellipse at 30% 40%, rgba(192,168,130,0.12) 0%, transparent 35%),
+        radial-gradient(ellipse at 80% 70%, rgba(212,193,160,0.1) 0%, transparent 40%),
+        radial-gradient(ellipse at 10% 10%, rgba(166,149,112,0.08) 0%, transparent 25%),
+        /* Subtle creases and folds */
+        linear-gradient(135deg, transparent 48%, rgba(192,168,130,0.04) 50%, transparent 52%),
+        linear-gradient(45deg, transparent 47%, rgba(166,149,112,0.05) 49%, transparent 51%);
+      background-size: 
+        200px 180px,
+        250px 220px,
+        180px 160px,
+        120px 100px,
+        160px 140px,
+        4px 4px,
+        6px 6px,
+        300px 250px,
+        350px 300px,
+        200px 180px,
+        100% 100%,
+        100% 100%;
+      background-attachment: fixed;
+    }
   }
   
   /* Ensure the paper texture covers everything */
@@ -728,11 +745,15 @@
   .animate-scroll-left {
     animation: scrollLeft 25s linear infinite;
     will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
 
   .animate-scroll-right {
     animation: scrollRight 20s linear infinite;
     will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
 
   .vertical-text-left {
@@ -740,6 +761,8 @@
     text-orientation: mixed;
     animation: scrollUp 20s linear infinite;
     will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
 
   .vertical-text-right {
@@ -747,16 +770,26 @@
     text-orientation: mixed;
     animation: scrollDown 15s linear infinite;
     will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
 
-  /* Faster animations on mobile for better performance */
-  @media (max-width: 640px) {
+  /* Slower, more efficient animations on mobile */
+  @media (max-width: 768px) {
     .animate-scroll-left {
-      animation-duration: 20s;
+      animation-duration: 35s;
     }
 
     .animate-scroll-right {
-      animation-duration: 18s;
+      animation-duration: 30s;
+    }
+    
+    /* Reduce animation complexity on mobile */
+    @supports (-webkit-overflow-scrolling: touch) {
+      .animate-scroll-left,
+      .animate-scroll-right {
+        animation-timing-function: linear;
+      }
     }
   }
 
@@ -924,4 +957,61 @@ input:focus, textarea:focus, select:focus {
   box-shadow: 
     inset 1px 1px 4px rgba(166,149,112,0.15), 
     0 0 0 1px rgba(192,168,130,0.3);
+}
+
+/* Mobile Performance Optimizations */
+@media (max-width: 768px) {
+  /* Disable expensive effects on mobile */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Optimize shadows for mobile */
+  button, input, textarea, select {
+    box-shadow: none !important;
+  }
+  
+  button:hover {
+    transform: none;
+  }
+  
+  /* Reduce animation complexity */
+  .animate-pulse {
+    animation: none;
+  }
+  
+  /* Simplify transitions */
+  * {
+    transition-duration: 0.15s !important;
+  }
+  
+  /* Optimize font rendering */
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeSpeed;
+  }
+  
+  /* Remove fixed backgrounds on mobile */
+  .newspaper-bg::before {
+    display: none;
+  }
+  
+  /* Optimize scroll performance */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Additional mobile touch optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Remove hover effects on touch devices */
+  *:hover {
+    transition: none !important;
+  }
+  
+  /* Optimize button interactions */
+  button:active {
+    transform: scale(0.98);
+  }
 }
