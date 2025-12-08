@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useReader } from '../../contexts/ReaderContext';
 import NewspaperBorders from '../Layout/NewspaperBorders';
 import { ENABLE_NEWSPAPER_BORDERS } from '../../utils/newspaperBorders';
+import { fetchDirectNews, searchDirectNews } from '../../services/directNewsService';
 import './RealTimeNews.css';
 
 interface NewsArticle {
@@ -247,39 +248,30 @@ const RealTimeNews: React.FC = () => {
     ];
   };
 
-  // Fetch latest news articles
+  // Fetch latest news articles - DIRECT from APIs, no caching
   const fetchNews = useCallback(async (category: string = 'all', search: string = '') => {
     try {
       setLoading(true);
-      let url = `${API_BASE_URL}/live-news?limit=150`;
+      console.log('🔍 Fetching DIRECT news from APIs...', { category, search });
       
-      if (category !== 'all') {
-        url += `&category=${encodeURIComponent(category)}`;
-      }
+      let articles;
       
       if (search) {
-        // Use search endpoint for text queries
-        url = `${API_BASE_URL}/search-live?query=${encodeURIComponent(search)}&limit=100`;
+        // Use direct search
+        articles = await searchDirectNews(search, 100);
+      } else {
+        // Use direct news fetch
+        articles = await fetchDirectNews(category, 150);
       }
-
-      console.log('🔍 Fetching live news from:', url);
-      const response = await fetch(url);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      
-      const data = await response.json();
-      const articles = search ? (data.results || data.articles || []) : (data.articles || []);
       
       setArticles(articles);
       setError(null);
-      setServiceStatus('🟢 LIVE NEWS API ACTIVE');
-      console.log(`✅ Successfully loaded ${articles.length} articles from live news APIs`);
+      setServiceStatus('🟢 LIVE NEWS (DIRECT FROM APIS)');
+      console.log(`✅ Successfully loaded ${articles.length} articles directly from APIs`);
       
     } catch (err) {
-      console.warn('⚠️ Live news API not available, using mock data:', err);
-      // Use mock data when backend is not available
+      console.warn('⚠️ Direct news fetch failed, using mock data:', err);
+      // Use mock data when APIs fail
       const mockData = getMockData();
       
       // Apply filters to mock data
@@ -299,7 +291,7 @@ const RealTimeNews: React.FC = () => {
       }
       
       setArticles(filteredData);
-      setStatusMessage('📡 Using cached news - live API temporarily unavailable');
+      setStatusMessage('📡 Using cached news - APIs temporarily unavailable');
       setIsSuccessStatus(false);
       setServiceStatus('🟡 USING CACHED DATA');
       
@@ -311,7 +303,7 @@ const RealTimeNews: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [API_BASE_URL]);
+  }, []);
 
   // Fetch statistics
   const fetchStatistics = useCallback(async () => {
