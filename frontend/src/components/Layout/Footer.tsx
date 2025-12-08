@@ -2,9 +2,9 @@ import React from 'react';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="text-black border-t-4 border-black" style={{background: '#e8dcc8'}}>
-      <div className="container mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="text-black border-t-4 border-black mb-6 sm:mb-8" style={{background: '#e8dcc8'}}>
+      <div className="max-w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-8">
           {/* Brand Section */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-3 mb-4">
