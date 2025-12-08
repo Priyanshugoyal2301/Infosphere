@@ -8,13 +8,17 @@ const GNEWS_API_KEY = 'eda407cf5b208678dcba2187d0ad083c';
 const NEWSDATA_API_KEY = 'pub_6212126cd950424e9655636edc039ad9';
 
 interface DirectNewsArticle {
+  id?: number;
   title: string;
   content: string;
   source: string;
   category: string;
   published_date: string;
+  fetched_date: string;
   url: string;
   image?: string;
+  location?: string;
+  confidence?: number;
 }
 
 /**
@@ -44,6 +48,7 @@ async function fetchFromNewsAPI(category: string = 'general', limit: number = 50
       source: article.source?.name || 'NewsAPI',
       category: category,
       published_date: article.publishedAt || new Date().toISOString(),
+      fetched_date: new Date().toISOString(),
       url: article.url || '#',
       image: article.urlToImage
     }));
@@ -79,6 +84,7 @@ async function fetchFromGNews(category: string = 'general', limit: number = 50):
       source: article.source?.name || 'GNews',
       category: category,
       published_date: article.publishedAt || new Date().toISOString(),
+      fetched_date: new Date().toISOString(),
       url: article.url || '#',
       image: article.image
     }));
@@ -114,6 +120,7 @@ async function fetchFromNewsData(category: string = 'top', limit: number = 50): 
       source: article.source_id || 'NewsData',
       category: article.category?.[0] || category,
       published_date: article.pubDate || new Date().toISOString(),
+      fetched_date: new Date().toISOString(),
       url: article.link || '#',
       image: article.image_url
     }));
@@ -226,6 +233,7 @@ export async function searchDirectNews(query: string, limit: number = 100): Prom
       source: article.source?.name || 'NewsAPI',
       category: 'search',
       published_date: article.publishedAt || new Date().toISOString(),
+      fetched_date: new Date().toISOString(),
       url: article.url || '#',
       image: article.urlToImage
     }));
