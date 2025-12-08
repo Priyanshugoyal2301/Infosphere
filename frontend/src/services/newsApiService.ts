@@ -22,21 +22,43 @@ const CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
 let cachedArticles: NewsArticle[] | null = null;
 let lastFetchTime: number = 0;
 
+// Format date to relative time (e.g., "2 hours ago", "3 days ago")
+function formatRelativeTime(dateString: string): string {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+  
+  if (diffMins < 1) return 'Just now';
+  if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
+  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+  if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+  
+  // For older dates, show formatted date
+  return date.toLocaleDateString('en-IN', { 
+    day: 'numeric', 
+    month: 'short', 
+    year: 'numeric' 
+  });
+}
+
 const NEWS_APIS = {
   gnews: {
     key: 'eda407cf5b208678dcba2187d0ad083c',
     url: 'https://gnews.io/api/v4/top-headlines',
-    params: '?lang=en&max=10&country=in'
+    params: '?lang=en&max=30&country=in'
   },
   newsdata: {
     key: 'pub_d29854fffb18474da508e0a12322adff',
     url: 'https://newsdata.io/api/1/latest',
-    params: '?language=en&country=in'
+    params: '?language=en&country=in&size=10'
   },
   newsapi: {
     key: 'b9332a9838474c4e9f42521e4b2bb197',
     url: 'https://newsapi.org/v2/top-headlines',
-    params: '?country=in&pageSize=10'
+    params: '?country=in&pageSize=30'
   }
 };
 
@@ -63,7 +85,7 @@ async function fetchGNews(): Promise<NewsArticle[]> {
       source: article.source?.name || 'GNews',
       author: article.source?.name || 'Unknown',
       published_at: article.publishedAt || new Date().toISOString(),
-      published_date: article.publishedAt || new Date().toISOString(),
+      published_date: formatRelativeTime(article.publishedAt || new Date().toISOString()),
       fetched_date: new Date().toISOString(),
       image_url: article.image || '',
       category: 'General',
@@ -100,7 +122,7 @@ async function fetchNewsData(): Promise<NewsArticle[]> {
       source: article.source_id || 'NewsData.io',
       author: article.creator?.[0] || 'Unknown',
       published_at: article.pubDate || new Date().toISOString(),
-      published_date: article.pubDate || new Date().toISOString(),
+      published_date: formatRelativeTime(article.pubDate || new Date().toISOString()),
       fetched_date: new Date().toISOString(),
       image_url: article.image_url || '',
       category: article.category?.[0] || 'General',
@@ -137,7 +159,7 @@ async function fetchNewsAPI(): Promise<NewsArticle[]> {
       source: article.source?.name || 'NewsAPI',
       author: article.author || 'Unknown',
       published_at: article.publishedAt || new Date().toISOString(),
-      published_date: article.publishedAt || new Date().toISOString(),
+      published_date: formatRelativeTime(article.publishedAt || new Date().toISOString()),
       fetched_date: new Date().toISOString(),
       image_url: article.urlToImage || '',
       category: 'General',
