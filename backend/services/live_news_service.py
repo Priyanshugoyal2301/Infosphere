@@ -44,14 +44,34 @@ class LiveNewsService:
         print(f"[INIT] Loaded API Keys: NewsAPI={bool(self.newsapi_key)}, GNews={bool(self.gnews_key)}, NewsData={bool(self.newsdata_key)}")
         
         # Cache settings
-        self.cache_file = "news_cache_v2.json"  # Changed to v2 to force fresh fetch with new confidence values
-        cache_duration_minutes = int(os.getenv("NEWS_CACHE_DURATION", 15))  # Reduced from 120 to 15 minutes
+        self.cache_version = "v3"  # Increment this to invalidate all old caches
+        self.cache_file = f"news_cache_{self.cache_version}.json"
+        cache_duration_minutes = int(os.getenv("NEWS_CACHE_DURATION", 10))  # 10 minutes
         self.cache_duration = timedelta(minutes=cache_duration_minutes)
+        
+        # Clean up old cache files on startup
+        self._cleanup_old_caches()
         
         # API endpoints
         self.newsapi_url = "https://newsapi.org/v2/top-headlines"
         self.gnews_url = "https://gnews.io/api/v4/top-headlines"
         self.newsdata_url = "https://newsdata.io/api/1/news"
+    
+    def _cleanup_old_caches(self):
+        """Remove old cache files from previous versions"""
+        try:
+            import glob
+            import os
+            cache_pattern = "news_cache_*.json"
+            for cache_file in glob.glob(cache_pattern):
+                if cache_file != self.cache_file:
+                    try:
+                        os.remove(cache_file)
+                        print(f"🗑️  Removed old cache file: {cache_file}")
+                    except Exception as e:
+                        print(f"⚠️  Could not remove {cache_file}: {e}")
+        except Exception as e:
+            print(f"⚠️  Cache cleanup failed: {e}")
     
     async def fetch_live_news(self, category: Optional[str] = None, limit: int = 100) -> List[Dict]:
         """
@@ -401,7 +421,7 @@ class LiveNewsService:
             print(f"⚠️ Cache write failed: {str(e)}")
     
     def _get_cached_news(self, category: Optional[str] = None) -> Optional[List[Dict]]:
-        """Get cached news if still valid (within cache duration)"""
+        """Get cached news if still valid (within cache duration and from today)"""
         cache_key = category or "all"
         cache_data = self._load_cache()
         
@@ -409,8 +429,18 @@ class LiveNewsService:
             cached = cache_data[cache_key]
             timestamp = datetime.fromisoformat(cached["timestamp"])
             
-            if datetime.now() - timestamp < self.cache_duration:
+            # Check if cache is from today and within duration
+            now = datetime.now()
+            is_same_day = timestamp.date() == now.date()
+            is_within_duration = now - timestamp < self.cache_duration
+            
+            if is_same_day and is_within_duration:
+                print(f"📦 Using cache from {timestamp.strftime('%H:%M:%S')} (age: {int((now - timestamp).total_seconds() / 60)} min)")
                 return cached["articles"]
+            elif not is_same_day:
+                print(f"🗓️  Cache is from {timestamp.date()}, invalidating...")
+            else:
+                print(f"⏰ Cache expired (age: {int((now - timestamp).total_seconds() / 60)} min)")
         
         return None
     
